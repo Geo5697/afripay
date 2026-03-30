@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface de Recharge - Hiveqash Style</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <div class="max-w-md mx-auto p-4 md:pt-10">
+        
+        <h1 class="text-xl font-bold">Compte de recharge</h1>
+        <p class="text-xs text-gray-500 mb-6">Approvisionnez votre portefeuille en toute sécurité via les canaux de paiement pris en charge.</p>
+
+        <div class="bg-white border border-gray-200 rounded-lg p-4 flex items-start gap-3 mb-4 shadow-sm">
+            <div class="bg-gray-100 p-2 rounded-full">
+                <i class="fas fa-exclamation-circle text-gray-400 text-sm"></i>
+            </div>
+            <div>
+                <p class="text-sm font-bold text-gray-700">Compte inactif</p>
+                <p class="text-xs text-gray-500 italic font-medium">Veuillez vous abonner pour activer votre compte.</p>
+            </div>
+        </div>
+
+        <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 flex justify-between items-center mb-6">
+            <p class="text-blue-700 text-[13px]">
+                Utilisez ce numéro pour les dépôts : <span class="font-bold">+229 56973507</span>
+            </p>
+            <button class="text-blue-400 hover:text-blue-600">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+            <div class="mb-5">
+                <h2 class="text-sm font-bold text-gray-700">Argent mobile (STK)</h2>
+                <p class="text-[11px] text-gray-400 leading-tight">Initiez le paiement directement sur votre téléphone</p>
+            </div>
+
+            <form action="confirmation.php" method="POST" class="space-y-4">
+                
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-500 mb-1 uppercase tracking-wider">Sélectionner la chaîne</label>
+                    <select class="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none appearance-none cursor-pointer">
+                        <option>MTN MOMO BENIN</option>
+                        <option>MOOV MONEY BENIN</option>
+                        <option selected>MTN MOMO CAMEROUN</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-500 mb-1 uppercase tracking-wider">Numéro de portefeuille</label>
+                    <input type="text" value="56973507" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-500 mb-1 uppercase tracking-wider">Montant</label>
+                    <div class="flex">
+                        <span class="inline-flex items-center px-4 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-xs font-bold uppercase">XOF</span>
+                        <input type="number" value="4300" class="w-full border border-gray-300 rounded-r-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-md shadow-md transition-all flex items-center justify-center gap-2 text-sm mt-6">
+                    <i class="fas fa-wallet"></i> Effectuer le paiement
+                </button>
+            </form>
+        </div>
+
+        <div class="mt-4 flex flex-col gap-2">
+            <button class="bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold py-2 px-4 rounded shadow-sm w-fit uppercase">
+                Accéder au tableau de bord
+            </button>
+            
+            <button class="bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold py-2 px-4 rounded shadow-sm w-fit uppercase">
+                Accéder au tableau de bord
+            </button>
+        </div>
+
+    </div>
+
+</body>
+</html>
