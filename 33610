@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkFlow Africa — Plateforme de Travail en Ligne</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --gold: #F5C518;
+    --gold-light: #FFD84D;
+    --dark: #0A0A0F;
+    --dark2: #12121A;
+    --dark3: #1C1C28;
+    --card: #1E1E2E;
+    --border: rgba(245,197,24,0.18);
+    --text: #E8E8F0;
+    --muted: #7A7A9A;
+    --green: #22C55E;
+    --red: #EF4444;
+    --blue: #3B82F6;
+    --radius: 16px;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ========= PAGES ========= */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: flex; flex-direction: column; }
+
+  /* ========= BACKGROUND EFFECTS ========= */
+  .bg-glow {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 20%, rgba(245,197,24,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 30% at 80% 80%, rgba(59,130,246,0.05) 0%, transparent 70%);
+  }
+
+  /* ========= NAV ========= */
+  .nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 28px; border-bottom: 1px solid var(--border);
+    background: rgba(10,10,15,0.9); backdrop-filter: blur(12px);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-logo { font-family: var(--font-head); font-size: 1.3rem; font-weight: 800; color: var(--gold); letter-spacing: -0.5px; }
+  .nav-logo span { color: var(--text); }
+  .nav-links { display: flex; gap: 8px; }
+  .nav-btn {
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+    padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: var(--font-body);
+    font-size: 0.85rem; transition: all 0.2s;
+  }
+  .nav-btn:hover, .nav-btn.active-nav { background: var(--gold); color: var(--dark); border-color: var(--gold); font-weight: 600; }
+  .nav-balance { font-family: var(--font-head); font-weight: 700; color: var(--gold); font-size: 0.95rem; display: flex; align-items: center; gap: 6px; }
+
+  /* ========= CONTENT ========= */
+  .content { flex: 1; padding: 40px 20px; max-width: 520px; margin: 0 auto; width: 100%; position: relative; z-index: 1; }
+  .content-wide { max-width: 900px; }
+
+  /* ========= HEADINGS ========= */
+  .page-title { font-family: var(--font-head); font-size: 2rem; font-weight: 800; margin-bottom: 6px; line-height: 1.1; }
+  .page-title span { color: var(--gold); }
+  .page-sub { color: var(--muted); font-size: 0.95rem; margin-bottom: 32px; }
+
+  /* ========= CARD ========= */
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  /* ========= FORM ========= */
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; font-weight: 500; letter-spacing: 0.3px; }
+  .form-input {
+    width: 100%; background: var(--dark3); border: 1px solid var(--border);
+    color: var(--text); padding: 14px 16px; border-radius: 10px;
+    font-family: var(--font-body); font-size: 0.95rem; transition: all 0.2s; outline: none;
+  }
+  .form-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245,197,24,0.1); }
+  .form-input::placeholder { color: var(--muted); }
+
+  /* ========= BUTTONS ========= */
+  .btn-primary {
+    width: 100%; background: var(--gold); color: var(--dark); border: none;
+    padding: 15px 24px; border-radius: 10px; font-family: var(--font-head);
+    font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(245,197,24,0.3); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-outline {
+    background: transparent; border: 1px solid var(--border); color: var(--text);
+    padding: 10px 18px; border-radius: 8px; cursor: pointer; font-family: var(--font-body);
+    font-size: 0.9rem; transition: all 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+  .btn-green { background: var(--green); color: white; border: none; padding: 9px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s; }
+  .btn-green:hover { background: #16a34a; }
+  .btn-green:disabled { background: #166534; color: #4ade80; cursor: not-allowed; opacity: 0.6; }
+
+  .btn-gold-sm { background: var(--gold); color: var(--dark); border: none; padding: 9px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s; }
+  .btn-gold-sm:hover { background: var(--gold-light); }
+  .btn-gold-sm:disabled { background: #7a6200; color: #cca800; cursor: not-allowed; }
+
+  /* ========= PAYMENT OPTIONS ========= */
+  .payment-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .payment-option {
+    background: var(--dark3); border: 2px solid var(--border); border-radius: 12px;
+    padding: 16px 12px; text-align: center; cursor: pointer; transition: all 0.2s;
+  }
+  .payment-option:hover { border-color: var(--gold); }
+  .payment-option.selected { border-color: var(--gold); background: rgba(245,197,24,0.08); }
+  .payment-option .amount { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; color: var(--gold); }
+  .payment-option .currency { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+  .payment-option .check { font-size: 1.2rem; margin-bottom: 8px; }
+
+  /* ========= TASKS ========= */
+  .task-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px; margin-bottom: 14px; transition: all 0.2s;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .task-card.done { border-color: var(--green); background: rgba(34,197,94,0.05); }
+  .task-card.in-progress { border-color: var(--gold); background: rgba(245,197,24,0.05); }
+
+  .task-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .task-info { flex: 1; min-width: 160px; }
+  .task-name { font-family: var(--font-head); font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
+  .task-platform { font-size: 0.8rem; color: var(--muted); }
+  .task-reward { font-family: var(--font-head); font-weight: 700; color: var(--gold); font-size: 1rem; white-space: nowrap; }
+  .task-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .task-status { font-size: 0.8rem; color: var(--green); font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+  /* ========= BALANCE PAGE ========= */
+  .balance-big { font-family: var(--font-head); font-size: 3rem; font-weight: 800; color: var(--gold); text-align: center; margin: 20px 0 6px; }
+  .balance-label { text-align: center; color: var(--muted); font-size: 0.9rem; margin-bottom: 32px; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
+  .stat-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; text-align: center; }
+  .stat-num { font-family: var(--font-head); font-size: 1.5rem; font-weight: 700; color: var(--text); }
+  .stat-lbl { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+  .history-item {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 18px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .history-left { display: flex; align-items: center; gap: 12px; }
+  .history-icon { font-size: 1.2rem; }
+  .history-name { font-size: 0.9rem; font-weight: 500; }
+  .history-time { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+  .history-amount { font-family: var(--font-head); font-weight: 700; color: var(--green); font-size: 0.95rem; }
+
+  /* ========= ADMIN ========= */
+  .admin-login { max-width: 380px; margin: 60px auto; }
+  .admin-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+  .admin-tab { background: var(--dark3); border: 1px solid var(--border); color: var(--muted); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+  .admin-tab.active { background: var(--gold); color: var(--dark); font-weight: 700; border-color: var(--gold); }
+
+  .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .admin-table th { text-align: left; color: var(--muted); font-weight: 500; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  .admin-table td { padding: 13px 14px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .admin-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+  .badge-green { background: rgba(34,197,94,0.15); color: var(--green); }
+  .badge-gold { background: rgba(245,197,24,0.15); color: var(--gold); }
+  .badge-blue { background: rgba(59,130,246,0.15); color: var(--blue); }
+
+  .admin-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 28px; }
+  .admin-stat { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .admin-stat-num { font-family: var(--font-head); font-size: 1.8rem; font-weight: 800; color: var(--gold); }
+  .admin-stat-lbl { color: var(--muted); font-size: 0.8rem; margin-top: 4px; }
+
+  /* ========= HERO ========= */
+  .hero { text-align: center; padding: 60px 20px 20px; position: relative; z-index: 1; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(245,197,24,0.1); border: 1px solid rgba(245,197,24,0.3); color: var(--gold); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 24px; }
+  .hero-title { font-family: var(--font-head); font-size: clamp(2.2rem, 6vw, 3.5rem); font-weight: 800; line-height: 1.05; margin-bottom: 16px; }
+  .hero-title span { color: var(--gold); }
+  .hero-desc { color: var(--muted); font-size: 1rem; max-width: 420px; margin: 0 auto 36px; line-height: 1.7; }
+
+  /* ========= TOAST ========= */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--card); border: 1px solid var(--border); color: var(--text);
+    padding: 14px 24px; border-radius: 10px; font-size: 0.9rem; z-index: 9999;
+    transition: transform 0.3s; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: var(--green); }
+  .toast.error { border-color: var(--red); }
+
+  /* ========= STEP INDICATOR ========= */
+  .steps { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 36px; }
+  .step { display: flex; align-items: center; }
+  .step-num { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; color: var(--muted); transition: all 0.3s; }
+  .step-num.done { background: var(--green); border-color: var(--green); color: white; }
+  .step-num.active { background: var(--gold); border-color: var(--gold); color: var(--dark); }
+  .step-line { width: 48px; height: 2px; background: var(--border); }
+  .step-line.done { background: var(--green); }
+
+  /* ========= DIVIDER ========= */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+  /* ========= SECTION TITLE ========= */
+  .section-title { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* ========= EMPTY STATE ========= */
+  .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+  .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+
+  /* ========= RESPONSIVE ========= */
+  @media (max-width: 480px) {
+    .nav { padding: 14px 16px; }
+    .nav-logo { font-size: 1.1rem; }
+    .content { padding: 24px 14px; }
+    .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .stat-box { padding: 12px 8px; }
+    .stat-num { font-size: 1.2rem; }
+    .task-card { gap: 12px; }
+    .admin-table { font-size: 0.78rem; }
+    .admin-table th, .admin-table td { padding: 10px 8px; }
+  }
+
+  /* ========= SCROLLBAR ========= */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--dark); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ========= ANIMATIONS ========= */
+  @keyframes fadeUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+  .fade-up { animation: fadeUp 0.4s ease forwards; }
+  @keyframes pulse { 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.05); } }
+  .pulse { animation: pulse 0.3s ease; }
+
+  .confetti-burst { animation: pulse 0.4s ease; }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="toast" id="toast"></div>
+
+<!-- ============================================================ -->
+<!-- PAGE 1: INSCRIPTION -->
+<!-- ============================================================ -->
+<div class="page active" id="page-inscription">
+  <nav class="nav">
+    <div class="nav-logo">Work<span>Flow</span> Africa</div>
+  </nav>
+  <div style="flex:1; position:relative; z-index:1;">
+    <div class="hero">
+      <div class="hero-badge">🌍 Plateforme #1 en Afrique de l'Ouest</div>
+      <h1 class="hero-title">Gagnez de l'argent<br>en ligne <span>chaque jour</span></h1>
+      <p class="hero-desc">Accomplissez des missions simples sur TikTok & Facebook et recevez votre rémunération immédiatement.</p>
+    </div>
+
+    <div class="content fade-up">
+      <div class="steps">
+        <div class="step"><div class="step-num active">1</div></div>
+        <div class="step-line"></div>
+        <div class="step"><div class="step-num">2</div></div>
+        <div class="step-line"></div>
+        <div class="step"><div class="step-num">3</div></div>
+      </div>
+
+      <div class="card">
+        <h2 class="page-title" style="font-size:1.4rem; margin-bottom:4px;">Créer mon compte</h2>
+        <p class="page-sub" style="margin-bottom:24px;">Inscription rapide et gratuite</p>
+
+        <div class="form-group">
+          <label class="form-label">Nom *</label>
+          <input class="form-input" type="text" id="nom" placeholder="Ex: Konaté" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Prénom *</label>
+          <input class="form-input" type="text" id="prenom" placeholder="Ex: Aminata" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Adresse Gmail *</label>
+          <input class="form-input" type="email" id="email" placeholder="exemple@gmail.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Numéro de téléphone *</label>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <select class="form-input" id="tel-indicatif" style="width:auto; min-width:190px; cursor:pointer;">
+              <option value="+225">🇨🇮 +225 — Côte d'Ivoire</option>
+              <option value="+221">🇸🇳 +221 — Sénégal</option>
+              <option value="+223">🇲🇱 +223 — Mali</option>
+              <option value="+226">🇧🇫 +226 — Burkina Faso</option>
+              <option value="+227">🇳🇪 +227 — Niger</option>
+              <option value="+228">🇹🇬 +228 — Togo</option>
+              <option value="+229">🇧🇯 +229 — Bénin</option>
+              <option value="+245">🇬🇼 +245 — Guinée-Bissau</option>
+              <option value="+237">🇨🇲 +237 — Cameroun</option>
+              <option value="+236">🇨🇫 +236 — Centrafrique</option>
+              <option value="+235">🇹🇩 +235 — Tchad</option>
+              <option value="+242">🇨🇬 +242 — Congo-Brazzaville</option>
+              <option value="+241">🇬🇦 +241 — Gabon</option>
+              <option value="+240">🇬🇶 +240 — Guinée équatoriale</option>
+              <option value="+269">🇰🇲 +269 — Comores</option>
+            </select>
+            <input class="form-input" type="tel" id="tel" placeholder="07 00 00 00 00" style="flex:1; min-width:140px;" />
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="validerInscription()">Valider</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PAGE 2: PAIEMENT -->
+<!-- ============================================================ -->
+<div class="page" id="page-paiement">
+  <nav class="nav">
+    <div class="nav-logo">Work<span>Flow</span> Africa</div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goTo('page-inscription')">← Retour</button>
+    </div>
+  </nav>
+  <div class="content fade-up" style="position:relative;z-index:1;">
+    <div class="steps" style="margin-top:28px;">
+      <div class="step"><div class="step-num done">✓</div></div>
+      <div class="step-line done"></div>
+      <div class="step"><div class="step-num active">2</div></div>
+      <div class="step-line"></div>
+      <div class="step"><div class="step-num">3</div></div>
+    </div>
+
+    <h2 class="page-title">Choisir mon <span>dépôt</span></h2>
+    <p class="page-sub">Votre dépôt détermine vos missions et vos gains journaliers</p>
+
+    <div class="card">
+      <p class="section-title" style="font-size:0.85rem;">Montant du dépôt</p>
+      <div class="payment-grid">
+        <div class="payment-option" onclick="selectPayment(this, 5000)">
+          <div class="check">💳</div>
+          <div class="amount">5 000</div>
+          <div class="currency">FCFA</div>
+        </div>
+        <div class="payment-option" onclick="selectPayment(this, 10000)">
+          <div class="check">💳</div>
+          <div class="amount">10 000</div>
+          <div class="currency">FCFA</div>
+        </div>
+        <div class="payment-option" onclick="selectPayment(this, 20000)">
+          <div class="check">💳</div>
+          <div class="amount">20 000</div>
+          <div class="currency">FCFA</div>
+        </div>
+        <div class="payment-option" onclick="selectPayment(this, 30000)">
+          <div class="check">💳</div>
+          <div class="amount">30 000</div>
+          <div class="currency">FCFA</div>
+        </div>
+        <div class="payment-option" onclick="selectPayment(this, 40000)">
+          <div class="check">💳</div>
+          <div class="amount">40 000</div>
+          <div class="currency">FCFA</div>
+        </div>
+        <div class="payment-option" onclick="selectPayment(this, 50000)">
+          <div class="check">💳</div>
+          <div class="amount">50 000</div>
+          <div class="currency">FCFA</div>
+        </div>
+        <div class="payment-option" onclick="selectPayment(this, 60000)">
+          <div class="check">💳</div>
+          <div class="amount">60 000</div>
+          <div class="currency">FCFA</div>
+        </div>
+        <div class="payment-option" onclick="selectPayment(this, 70000)">
+          <div class="check">💳</div>
+          <div class="amount">70 000</div>
+          <div class="currency">FCFA</div>
+        </div>
+        <div class="payment-option" onclick="selectPayment(this, 80000)">
+          <div class="check">💳</div>
+          <div class="amount">80 000</div>
+          <div class="currency">FCFA</div>
+        </div>
+        <div class="payment-option" onclick="selectPayment(this, 90000)">
+          <div class="check">💎</div>
+          <div class="amount">90 000</div>
+          <div class="currency">FCFA</div>
+        </div>
+        <div class="payment-option" onclick="selectPayment(this, 100000)">
+          <div class="check">⭐</div>
+          <div class="amount">100 000</div>
+          <div class="currency">FCFA</div>
+        </div>
+      </div>
+
+      <div id="payment-detail" style="display:none; background:var(--dark3); border-radius:10px; padding:16px; margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="color:var(--muted); font-size:0.85rem;">Dépôt sélectionné</span>
+          <span id="payment-amount-display" style="font-family:var(--font-head); font-weight:700; color:var(--gold); font-size:1.1rem;"></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:var(--muted); font-size:0.85rem;">Gains estimés/jour</span>
+          <span id="payment-gains" style="font-family:var(--font-head); font-weight:600; color:var(--green); font-size:0.95rem;"></span>
+        </div>
+      </div>
+
+      <div style="background:rgba(245,197,24,0.08); border:1px solid rgba(245,197,24,0.2); border-radius:10px; padding:14px; margin-bottom:20px; font-size:0.85rem; color:var(--muted);">
+        💡 <strong style="color:var(--text);">Mode démo</strong> — Aucun vrai paiement n'est effectué. Ceci est une simulation.
+      </div>
+
+      <button class="btn-primary" onclick="validerPaiement()" id="btn-payer" disabled style="opacity:0.5;">
+        Valider le paiement
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PAGE 3: TABLEAU DES TÂCHES -->
+<!-- ============================================================ -->
+<div class="page" id="page-taches">
+  <nav class="nav">
+    <div class="nav-logo">Work<span>Flow</span> Africa</div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goTo('page-taches')">Tâches</button>
+      <button class="nav-btn" onclick="goTo('page-solde')">Solde</button>
+      <button class="nav-btn" onclick="goTo('page-retrait')">Retrait</button>
+      <button class="nav-btn" onclick="goTo('page-profil')">Profil</button>
+    </div>
+    <div class="nav-balance">💰 <span id="nav-balance-display">0</span> FCFA</div>
+  </nav>
+
+  <div class="content content-wide fade-up" style="position:relative;z-index:1;">
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:8px;">
+      <div>
+        <h2 class="page-title" style="font-size:1.5rem;">Mes <span>missions</span></h2>
+        <p class="page-sub" style="margin-bottom:0;">Complétez les tâches pour gagner des FCFA</p>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:0.8rem; color:var(--muted);">Tâches complétées</div>
+        <div style="font-family:var(--font-head); font-size:1.4rem; font-weight:800; color:var(--gold);" id="tasks-count">0 / 16</div>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div style="background:var(--dark3); border-radius:8px; height:6px; margin-bottom:28px; overflow:hidden;">
+      <div id="progress-bar" style="height:100%; background:var(--gold); border-radius:8px; width:0%; transition:width 0.5s;"></div>
+    </div>
+
+    <div id="tasks-container"></div>
+
+    <div style="margin-top:16px; text-align:center;">
+      <div style="background:rgba(245,197,24,0.07); border:1px solid rgba(245,197,24,0.15); border-radius:10px; padding:14px; text-align:center; margin-top:8px;">
+        <p style="font-size:0.82rem; color:var(--muted); margin-bottom:10px;">⏰ Les tâches se réinitialisent automatiquement chaque jour à minuit. Revenez demain pour de nouvelles missions !</p>
+        <button class="btn-outline" onclick="resetTasks()" style="font-size:0.78rem; padding:7px 16px;">🔄 Simuler un nouveau jour</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PAGE 4: MON SOLDE -->
+<!-- ============================================================ -->
+<div class="page" id="page-solde">
+  <nav class="nav">
+    <div class="nav-logo">Work<span>Flow</span> Africa</div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goTo('page-taches')">Tâches</button>
+      <button class="nav-btn" onclick="goTo('page-solde')">Solde</button>
+      <button class="nav-btn" onclick="goTo('page-retrait')">Retrait</button>
+      <button class="nav-btn" onclick="goTo('page-profil')">Profil</button>
+    </div>
+    <div class="nav-balance">💰 <span id="nav-balance-display2">0</span> FCFA</div>
+  </nav>
+
+  <div class="content content-wide fade-up" style="position:relative;z-index:1;">
+    <h2 class="page-title" style="text-align:center; margin-top:20px;">Mon <span>Solde</span></h2>
+    <div class="balance-big" id="solde-display">0 FCFA</div>
+    <div class="balance-label">Gains totaux accumulés</div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-num" id="stat-taches">0</div>
+        <div class="stat-lbl">Tâches faites</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="stat-depot" style="color:var(--gold)">—</div>
+        <div class="stat-lbl">Dépôt initial</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" style="color:var(--green);">✓</div>
+        <div class="stat-lbl">Compte actif</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="font-family:var(--font-head); font-size:1rem; font-weight:700;">Historique des gains</h3>
+        <span style="font-size:0.8rem; color:var(--muted);" id="history-count">0 transactions</span>
+      </div>
+      <div id="history-list">
+        <div class="empty">
+          <div class="empty-icon">📋</div>
+          <p>Aucune tâche complétée pour l'instant.<br>Commencez à gagner !</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; text-align:center;">
+      <p style="color:var(--muted); font-size:0.85rem; margin-bottom:12px;">Montant minimum de retrait : <strong style="color:var(--text);">8 500 FCFA</strong></p>
+      <button class="btn-primary" onclick="goTo('page-retrait')" style="max-width:240px; display:inline-block; width:auto; padding:12px 32px;">
+        Demander un retrait →
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PAGE: RETRAIT -->
+<!-- ============================================================ -->
+<div class="page" id="page-retrait">
+  <nav class="nav">
+    <div class="nav-logo">Work<span>Flow</span> Africa</div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goTo('page-taches')">Tâches</button>
+      <button class="nav-btn" onclick="goTo('page-solde')">Solde</button>
+      <button class="nav-btn active-nav">Retrait</button>
+      <button class="nav-btn" onclick="goTo('page-profil')">Profil</button>
+    </div>
+    <div class="nav-balance">💰 <span id="nav-balance-display3">0</span> FCFA</div>
+  </nav>
+
+  <div class="content content-wide fade-up" style="position:relative;z-index:1;">
+    <h2 class="page-title" style="margin-top:20px;">Demande de <span>Retrait</span></h2>
+    <p class="page-sub">Retirez vos gains directement sur votre Mobile Money</p>
+
+    <!-- Solde disponible -->
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+      <div>
+        <div style="font-size:0.82rem; color:var(--muted); margin-bottom:4px;">Solde disponible</div>
+        <div id="retrait-solde-dispo" style="font-family:var(--font-head); font-size:2rem; font-weight:800; color:var(--gold);">0 FCFA</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:0.78rem; color:var(--muted);">Minimum de retrait</div>
+        <div style="font-family:var(--font-head); font-weight:700; color:var(--text); font-size:1.1rem;">5 000 FCFA</div>
+      </div>
+    </div>
+
+    <div class="card" id="retrait-form-card">
+      <h3 style="font-family:var(--font-head); font-size:1rem; font-weight:700; margin-bottom:20px;">Informations de retrait</h3>
+
+      <!-- Montant -->
+      <div class="form-group">
+        <label class="form-label">Montant à retirer (FCFA) *</label>
+        <input class="form-input" type="number" id="retrait-montant" placeholder="Ex: 10 000" min="8500" oninput="checkRetraitMontant()" />
+        <div id="retrait-montant-msg" style="font-size:0.78rem; margin-top:6px; color:var(--muted);"></div>
+      </div>
+
+      <!-- Opérateur -->
+      <div class="form-group">
+        <label class="form-label">Opérateur Mobile Money *</label>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(110px,1fr)); gap:10px; margin-top:4px;">
+          <div class="payment-option" onclick="selectOperateur(this,'Orange Money')" style="padding:12px 8px;">
+            <div style="font-size:1.5rem;">🟠</div>
+            <div style="font-size:0.82rem; font-weight:600; margin-top:4px;">Orange Money</div>
+          </div>
+          <div class="payment-option" onclick="selectOperateur(this,'MTN MoMo')" style="padding:12px 8px;">
+            <div style="font-size:1.5rem;">🟡</div>
+            <div style="font-size:0.82rem; font-weight:600; margin-top:4px;">MTN MoMo</div>
+          </div>
+          <div class="payment-option" onclick="selectOperateur(this,'Moov Money')" style="padding:12px 8px;">
+            <div style="font-size:1.5rem;">🔵</div>
+            <div style="font-size:0.82rem; font-weight:600; margin-top:4px;">Moov Money</div>
+          </div>
+          <div class="payment-option" onclick="selectOperateur(this,'Wave')" style="padding:12px 8px;">
+            <div style="font-size:1.5rem;">🌊</div>
+            <div style="font-size:0.82rem; font-weight:600; margin-top:4px;">Wave</div>
+          </div>
+          <div class="payment-option" onclick="selectOperateur(this,'Wizall')" style="padding:12px 8px;">
+            <div style="font-size:1.5rem;">💜</div>
+            <div style="font-size:0.82rem; font-weight:600; margin-top:4px;">Wizall</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Numéro -->
+      <div class="form-group">
+        <label class="form-label">Numéro Mobile Money *</label>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <select class="form-input" id="retrait-indicatif" style="width:auto; min-width:190px; cursor:pointer;">
+            <option value="+225">🇨🇮 +225 — Côte d'Ivoire</option>
+            <option value="+221">🇸🇳 +221 — Sénégal</option>
+            <option value="+223">🇲🇱 +223 — Mali</option>
+            <option value="+226">🇧🇫 +226 — Burkina Faso</option>
+            <option value="+227">🇳🇪 +227 — Niger</option>
+            <option value="+228">🇹🇬 +228 — Togo</option>
+            <option value="+229">🇧🇯 +229 — Bénin</option>
+            <option value="+245">🇬🇼 +245 — Guinée-Bissau</option>
+            <option value="+237">🇨🇲 +237 — Cameroun</option>
+            <option value="+236">🇨🇫 +236 — Centrafrique</option>
+            <option value="+235">🇹🇩 +235 — Tchad</option>
+            <option value="+242">🇨🇬 +242 — Congo-Brazzaville</option>
+            <option value="+241">🇬🇦 +241 — Gabon</option>
+            <option value="+240">🇬🇶 +240 — Guinée équatoriale</option>
+            <option value="+269">🇰🇲 +269 — Comores</option>
+          </select>
+          <input class="form-input" type="tel" id="retrait-numero" placeholder="07 00 00 00 00" style="flex:1; min-width:140px;" />
+        </div>
+      </div>
+
+      <!-- Nom titulaire -->
+      <div class="form-group">
+        <label class="form-label">Nom du titulaire du compte *</label>
+        <input class="form-input" type="text" id="retrait-nom" placeholder="Nom complet enregistré sur Mobile Money" />
+      </div>
+
+      <!-- Note info -->
+      <div style="background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.2); border-radius:10px; padding:14px; margin-bottom:20px; font-size:0.82rem; color:var(--muted); line-height:1.6;">
+        ℹ️ <strong style="color:var(--text);">Délai de traitement :</strong> Les retraits sont traités dans un délai de <strong style="color:var(--text);">24 à 48h</strong> ouvrables. Vous recevrez une notification dès que le virement est effectué.
+      </div>
+
+      <button class="btn-primary" onclick="soumettreRetrait()">Confirmer le retrait</button>
+    </div>
+
+    <!-- Historique retraits -->
+    <div style="margin-top:28px;">
+      <h3 style="font-family:var(--font-head); font-size:1rem; font-weight:700; margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+        Historique des retraits
+        <span style="flex:1; height:1px; background:var(--border); display:inline-block;"></span>
+      </h3>
+      <div id="retrait-history"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PAGE: PROFIL -->
+<!-- ============================================================ -->
+<div class="page" id="page-profil">
+  <nav class="nav">
+    <div class="nav-logo">Work<span>Flow</span> Africa</div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goTo('page-taches')">Tâches</button>
+      <button class="nav-btn" onclick="goTo('page-solde')">Solde</button>
+      <button class="nav-btn" onclick="goTo('page-retrait')">Retrait</button>
+      <button class="nav-btn active-nav">Profil</button>
+    </div>
+    <div class="nav-balance">💰 <span id="nav-balance-display4">0</span> FCFA</div>
+  </nav>
+
+  <div class="content content-wide fade-up" style="position:relative;z-index:1;">
+    <h2 class="page-title" style="margin-top:20px;">Mon <span>Profil</span></h2>
+    <p class="page-sub">Gérez vos informations personnelles et votre vérification</p>
+
+    <!-- Avatar + infos -->
+    <div class="card" style="margin-bottom:20px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+      <div id="profil-avatar" style="width:72px;height:72px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:1.8rem;font-weight:800;color:var(--dark);flex-shrink:0;"></div>
+      <div style="flex:1;">
+        <div id="profil-nom-display" style="font-family:var(--font-head);font-size:1.3rem;font-weight:800;"></div>
+        <div id="profil-email-display" style="color:var(--muted);font-size:0.88rem;margin-top:2px;"></div>
+        <div id="profil-tel-display" style="color:var(--muted);font-size:0.85rem;margin-top:2px;"></div>
+      </div>
+      <div id="profil-verified-badge" style="display:none;">
+        <span class="badge badge-green" style="font-size:0.85rem;padding:6px 14px;">✅ Vérifié</span>
+      </div>
+      <div id="profil-unverified-badge">
+        <span class="badge" style="background:rgba(239,68,68,0.15);color:#ef4444;font-size:0.85rem;padding:6px 14px;">⚠️ Non vérifié</span>
+      </div>
+    </div>
+
+    <!-- Stats rapides -->
+    <div class="stats-grid" style="margin-bottom:20px;">
+      <div class="stat-box">
+        <div class="stat-num" id="profil-stat-taches">0</div>
+        <div class="stat-lbl">Tâches faites</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="profil-stat-gains" style="color:var(--gold);">0</div>
+        <div class="stat-lbl">FCFA gagnés</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="profil-stat-depot" style="color:var(--blue);">—</div>
+        <div class="stat-lbl">Dépôt initial</div>
+      </div>
+    </div>
+
+    <!-- Vérification identité -->
+    <div class="card" style="margin-bottom:20px;" id="kyc-section">
+      <h3 style="font-family:var(--font-head);font-size:1rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px;">
+        🪪 Vérification d'identité
+        <span id="kyc-status-badge"></span>
+      </h3>
+      <p style="color:var(--muted);font-size:0.83rem;margin-bottom:18px;line-height:1.6;">
+        Pour effectuer des retraits, vous devez vérifier votre identité en uploadant une photo de votre pièce d'identité (CNI, passeport ou permis de conduire).
+      </p>
+
+      <div id="kyc-upload-zone" style="border:2px dashed var(--border);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:all 0.2s;" onclick="document.getElementById('kyc-file').click()" ondragover="event.preventDefault();this.style.borderColor='var(--gold)'" ondragleave="this.style.borderColor='var(--border)'">
+        <div style="font-size:2.5rem;margin-bottom:10px;">📄</div>
+        <div style="font-weight:600;margin-bottom:4px;">Cliquez pour uploader votre pièce d'identité</div>
+        <div style="font-size:0.8rem;color:var(--muted);">JPG, PNG ou PDF — max 5 Mo</div>
+        <input type="file" id="kyc-file" accept="image/*,.pdf" style="display:none;" onchange="handleKycUpload(event)" />
+      </div>
+
+      <div id="kyc-preview" style="display:none;margin-top:16px;">
+        <div style="display:flex;align-items:center;gap:12px;background:var(--dark3);border-radius:10px;padding:14px;">
+          <div style="font-size:2rem;">🖼️</div>
+          <div style="flex:1;">
+            <div id="kyc-filename" style="font-weight:600;font-size:0.9rem;"></div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Document uploadé avec succès</div>
+          </div>
+          <span class="badge badge-gold">⏳ En attente</span>
+        </div>
+        <button class="btn-primary" style="margin-top:14px;" onclick="soumettreKyc()">Soumettre pour vérification</button>
+      </div>
+
+      <div id="kyc-submitted" style="display:none;margin-top:16px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:16px;text-align:center;">
+        <div style="font-size:2rem;margin-bottom:8px;">✅</div>
+        <div style="font-weight:600;color:var(--green);">Document soumis avec succès !</div>
+        <div style="font-size:0.82rem;color:var(--muted);margin-top:4px;">Vérification en cours — résultat sous 24h</div>
+      </div>
+    </div>
+
+    <!-- Modifier infos -->
+    <div class="card">
+      <h3 style="font-family:var(--font-head);font-size:1rem;font-weight:700;margin-bottom:18px;">✏️ Modifier mes informations</h3>
+      <div class="form-group">
+        <label class="form-label">Nom</label>
+        <input class="form-input" type="text" id="edit-nom" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prénom</label>
+        <input class="form-input" type="text" id="edit-prenom" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Numéro de téléphone</label>
+        <input class="form-input" type="tel" id="edit-tel" />
+      </div>
+      <button class="btn-primary" onclick="sauvegarderProfil()">Enregistrer les modifications</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PAGE: PROFIL -->
+<!-- ============================================================ -->
+<div class="page" id="page-profil">
+  <nav class="nav">
+    <div class="nav-logo">Work<span>Flow</span> Africa</div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goTo('page-taches')">Tâches</button>
+      <button class="nav-btn" onclick="goTo('page-solde')">Solde</button>
+      <button class="nav-btn" onclick="goTo('page-retrait')">Retrait</button>
+      <button class="nav-btn" onclick="goTo('page-profil')">Profil</button>
+      <button class="nav-btn active-nav">Profil</button>
+    </div>
+    <div class="nav-balance">💰 <span id="nav-balance-display4">0</span> FCFA</div>
+  </nav>
+
+  <div class="content content-wide fade-up" style="position:relative;z-index:1;">
+
+    <!-- Avatar & nom -->
+    <div style="text-align:center; margin-top:28px; margin-bottom:28px;">
+      <div id="profil-avatar" style="width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#ff8c00);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:2rem;font-weight:800;color:var(--dark);margin:0 auto 14px;border:3px solid var(--gold);box-shadow:0 0 0 6px rgba(245,197,24,0.15);">?</div>
+      <div id="profil-nom-display" style="font-family:var(--font-head);font-size:1.4rem;font-weight:800;">—</div>
+      <div id="profil-email-display" style="color:var(--muted);font-size:0.85rem;margin-top:4px;">—</div>
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);color:var(--green);padding:4px 14px;border-radius:20px;font-size:0.78rem;font-weight:600;margin-top:10px;">✓ Compte actif</div>
+    </div>
+
+    <!-- Infos profil -->
+    <div class="card" style="margin-bottom:16px;">
+      <h3 style="font-family:var(--font-head);font-size:1rem;font-weight:700;margin-bottom:18px;">Informations personnelles</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div style="background:var(--dark3);border-radius:10px;padding:14px;">
+          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:4px;">Nom</div>
+          <div id="profil-nom" style="font-weight:600;font-size:0.95rem;">—</div>
+        </div>
+        <div style="background:var(--dark3);border-radius:10px;padding:14px;">
+          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:4px;">Prénom</div>
+          <div id="profil-prenom" style="font-weight:600;font-size:0.95rem;">—</div>
+        </div>
+        <div style="background:var(--dark3);border-radius:10px;padding:14px;grid-column:span 2;">
+          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:4px;">Email</div>
+          <div id="profil-email" style="font-weight:600;font-size:0.9rem;word-break:break-all;">—</div>
+        </div>
+        <div style="background:var(--dark3);border-radius:10px;padding:14px;grid-column:span 2;">
+          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:4px;">Téléphone</div>
+          <div id="profil-tel" style="font-weight:600;font-size:0.95rem;">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats profil -->
+    <div class="card" style="margin-bottom:16px;">
+      <h3 style="font-family:var(--font-head);font-size:1rem;font-weight:700;margin-bottom:18px;">Statistiques</h3>
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="stat-box">
+          <div class="stat-num" id="profil-stat-solde" style="color:var(--gold);font-size:1.1rem;">0</div>
+          <div class="stat-lbl">Solde (FCFA)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="profil-stat-taches">0</div>
+          <div class="stat-lbl">Tâches faites</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="profil-stat-depot" style="color:var(--green);font-size:1rem;">—</div>
+          <div class="stat-lbl">Plan actif</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pièce d identité -->
+    <div class="card" style="margin-bottom:16px;" id="kyc-card">
+      <h3 style="font-family:var(--font-head);font-size:1rem;font-weight:700;margin-bottom:6px;">🪪 Vérification d'identité (KYC)</h3>
+      <p style="color:var(--muted);font-size:0.82rem;margin-bottom:16px;line-height:1.6;">Pour sécuriser votre compte et activer les retraits, veuillez soumettre une photo de votre pièce d'identité (CNI, passeport ou permis de conduire).</p>
+
+      <div id="kyc-status-box" style="display:none; background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:14px;margin-bottom:14px;display:none;">
+        <div style="color:var(--green);font-weight:600;font-size:0.9rem;">✅ Pièce d'identité soumise — En cours de vérification</div>
+        <div style="color:var(--muted);font-size:0.78rem;margin-top:4px;">Délai de vérification : 24h ouvrables</div>
+      </div>
+
+      <div id="kyc-form">
+        <div class="form-group">
+          <label class="form-label">Type de document</label>
+          <select class="form-input" id="kyc-type" style="cursor:pointer;">
+            <option value="">-- Choisir --</option>
+            <option value="CNI">Carte Nationale d'Identité (CNI)</option>
+            <option value="Passeport">Passeport</option>
+            <option value="Permis">Permis de conduire</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Photo recto de la pièce</label>
+          <div id="kyc-drop-recto" onclick="document.getElementById('kyc-file-recto').click()" style="border:2px dashed var(--border);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="font-size:2rem;margin-bottom:8px;">📄</div>
+            <div style="font-size:0.85rem;color:var(--muted);">Cliquez pour choisir une photo</div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">JPG, PNG — max 5 MB</div>
+          </div>
+          <input type="file" id="kyc-file-recto" accept="image/*" style="display:none;" onchange="previewKYC(this,'kyc-preview-recto','kyc-drop-recto')" />
+          <img id="kyc-preview-recto" style="display:none;width:100%;border-radius:10px;margin-top:10px;max-height:180px;object-fit:cover;" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Photo verso de la pièce <span style="color:var(--muted);font-size:0.78rem;">(optionnel)</span></label>
+          <div id="kyc-drop-verso" onclick="document.getElementById('kyc-file-verso').click()" style="border:2px dashed var(--border);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="font-size:2rem;margin-bottom:8px;">📄</div>
+            <div style="font-size:0.85rem;color:var(--muted);">Cliquez pour choisir une photo</div>
+          </div>
+          <input type="file" id="kyc-file-verso" accept="image/*" style="display:none;" onchange="previewKYC(this,'kyc-preview-verso','kyc-drop-verso')" />
+          <img id="kyc-preview-verso" style="display:none;width:100%;border-radius:10px;margin-top:10px;max-height:180px;object-fit:cover;" />
+        </div>
+        <button class="btn-primary" onclick="soumettreKYC()">Soumettre ma pièce d'identité</button>
+      </div>
+    </div>
+
+    <!-- Déconnexion -->
+    <div style="text-align:center;margin-bottom:40px;">
+      <button onclick="deconnexion()" style="background:transparent;border:1px solid var(--red);color:var(--red);padding:10px 28px;border-radius:8px;cursor:pointer;font-size:0.9rem;transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'">🚪 Se déconnecter</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PAGE 5: ADMIN LOGIN -->
+<!-- ============================================================ -->
+<div class="page" id="page-admin-login">
+  <nav class="nav">
+    <div class="nav-logo">Work<span>Flow</span> Africa</div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="goTo('page-inscription')">← Accueil</button>
+    </div>
+  </nav>
+  <div class="content fade-up" style="position:relative;z-index:1;">
+    <div class="admin-login">
+      <h2 class="page-title" style="text-align:center; margin-top:30px;">Espace <span>Admin</span></h2>
+      <p class="page-sub" style="text-align:center;">Accès réservé aux administrateurs</p>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">Identifiant admin</label>
+          <input class="form-input" type="text" id="admin-user" placeholder="admin" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mot de passe</label>
+          <input class="form-input" type="password" id="admin-pass" placeholder="••••••••" />
+        </div>
+        <button class="btn-primary" onclick="adminLogin()">Se connecter</button>
+        <p style="text-align:center; color:var(--muted); font-size:0.78rem; margin-top:14px;">Identifiants démo : admin / admin123</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PAGE 6: ADMIN DASHBOARD -->
+<!-- ============================================================ -->
+<div class="page" id="page-admin">
+  <nav class="nav">
+    <div class="nav-logo">Work<span>Flow</span> Africa <span style="background:var(--red);color:white;font-size:0.65rem;padding:2px 8px;border-radius:4px;margin-left:8px;">ADMIN</span></div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="adminLogout()">Déconnexion</button>
+    </div>
+  </nav>
+
+  <div class="content content-wide fade-up" style="position:relative;z-index:1; max-width:950px;">
+    <h2 class="page-title" style="margin-top:20px;">Dashboard <span>Admin</span></h2>
+    <p class="page-sub">Vue d'ensemble de la plateforme</p>
+
+    <div class="admin-stat-grid" id="admin-stats"></div>
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="adminTab(this,'tab-users')">👥 Inscriptions</button>
+      <button class="admin-tab" onclick="adminTab(this,'tab-payments')">💳 Paiements</button>
+      <button class="admin-tab" onclick="adminTab(this,'tab-tasks')">✅ Tâches terminées</button>
+      <button class="admin-tab" onclick="adminTab(this,'tab-retraits')">💸 Retraits</button>
+      <button class="admin-tab" onclick="adminTab(this,'tab-kyc')">🪪 Vérifications</button>
+    </div>
+
+    <div id="tab-users" class="admin-section card" style="overflow-x:auto;"></div>
+    <div id="tab-payments" class="admin-section card" style="display:none; overflow-x:auto;"></div>
+    <div id="tab-tasks" class="admin-section card" style="display:none; overflow-x:auto;"></div>
+    <div id="tab-retraits" class="admin-section card" style="display:none; overflow-x:auto;"></div>
+    <div id="tab-kyc" class="admin-section card" style="display:none; overflow-x:auto;"></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ADMIN LINK (footer) -->
+<!-- ============================================================ -->
+<div id="footer-admin" style="position:fixed; bottom:10px; right:16px; z-index:200; display:none;">
+  <button onclick="goTo('page-admin-login')" style="background:rgba(30,30,46,0.9);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.75rem;backdrop-filter:blur(8px);">🔐 Admin</button>
+</div>
+
+<script>
+// ================================================================
+// STATE
+// ================================================================
+let appState = {
+  currentUser: null,
+  balance: 0,
+  depositAmount: 0,
+  history: [],
+  selectedPayment: null,
+  kycSubmitted: false,
+  kycFile: null,
+};
+
+// Global users/payments/completedTasks for admin
+let allUsers = [];
+let allPayments = [];
+let allCompletedTasks = [];
+let allRetraits = [];
+let allKYC = [];
+let allKyc = [];
+
+const TASKS_DEF = [
+  { id:1,  icon:'🎵', name:'Aimer la page TikTok @alice_56973507',        platform:'TikTok',    type:'Like',        url:'https://www.tiktok.com/@alice_56973507?_r=1&_t=ZS-959L6t3BFSO',    instruction:'Abonne-toi et aime les vidéos de ce compte TikTok.' },
+  { id:2,  icon:'🎵', name:'Commenter sur @alice_56973507',               platform:'TikTok',    type:'Commentaire', url:'https://www.tiktok.com/@alice_56973507?_r=1&_t=ZS-959L6t3BFSO',    instruction:'Laisse un commentaire positif sur une vidéo de ce compte.' },
+  { id:3,  icon:'🎵', name:'Aimer la page TikTok @jade569735',            platform:'TikTok',    type:'Like',        url:'https://www.tiktok.com/@jade569735?_r=1&_t=ZS-959LArApDpV',         instruction:'Abonne-toi et aime les vidéos de ce compte TikTok.' },
+  { id:4,  icon:'🎵', name:'Commenter sur @jade569735',                   platform:'TikTok',    type:'Commentaire', url:'https://www.tiktok.com/@jade569735?_r=1&_t=ZS-959LArApDpV',         instruction:'Laisse un commentaire positif sur une vidéo de ce compte.' },
+  { id:5,  icon:'🎵', name:'Aimer la page TikTok @user6101275815688',     platform:'TikTok',    type:'Like',        url:'https://www.tiktok.com/@user6101275815688?_r=1&_t=ZS-959LDxZA4ma',  instruction:'Abonne-toi et aime les vidéos de ce compte TikTok.' },
+  { id:6,  icon:'🎵', name:'Commenter sur @user6101275815688',            platform:'TikTok',    type:'Commentaire', url:'https://www.tiktok.com/@user6101275815688?_r=1&_t=ZS-959LDxZA4ma',  instruction:'Laisse un commentaire positif sur une vidéo de ce compte.' },
+  { id:7,  icon:'🎵', name:'Aimer la page TikTok @geoffroy699',           platform:'TikTok',    type:'Like',        url:'https://www.tiktok.com/@geoffroy699?_r=1&_t=ZS-959LGDrrdzg',        instruction:'Abonne-toi et aime les vidéos de ce compte TikTok.' },
+  { id:8,  icon:'🎵', name:'Commenter sur @geoffroy699',                  platform:'TikTok',    type:'Commentaire', url:'https://www.tiktok.com/@geoffroy699?_r=1&_t=ZS-959LGDrrdzg',        instruction:'Laisse un commentaire positif sur une vidéo de ce compte.' },
+  { id:9,  icon:'👍', name:'Aimer la page Facebook',                      platform:'Facebook',  type:'Like',        url:'https://www.facebook.com/profile.php?id=61585181311517',             instruction:'Clique sur le lien et aime la page Facebook.' },
+  { id:10, icon:'💬', name:'Commenter sur la page Facebook',              platform:'Facebook',  type:'Commentaire', url:'https://www.facebook.com/profile.php?id=61585181311517',             instruction:'Laisse un commentaire positif sur une publication.' },
+  { id:11, icon:'👍', name:'Aimer une publication Facebook',              platform:'Facebook',  type:'Like',        url:'https://www.facebook.com/profile.php?id=61585181311517',             instruction:'Trouve une publication et aime-la.' },
+  { id:12, icon:'💬', name:'Commenter une publication Facebook',          platform:'Facebook',  type:'Commentaire', url:'https://www.facebook.com/profile.php?id=61585181311517',             instruction:'Laisse un commentaire sur une autre publication.' },
+  { id:13, icon:'📸', name:'Aimer une publication Instagram',             platform:'Instagram', type:'Like',        url:'https://www.instagram.com/explore/',                                 instruction:'Explore Instagram et aime une publication.' },
+  { id:14, icon:'📸', name:'Commenter une publication Instagram',         platform:'Instagram', type:'Commentaire', url:'https://www.instagram.com/explore/',                                 instruction:'Laisse un commentaire positif sur une publication Instagram.' },
+  { id:15, icon:'📸', name:'Aimer une 2e publication Instagram',          platform:'Instagram', type:'Like',        url:'https://www.instagram.com/explore/',                                 instruction:'Explore Instagram et aime une autre publication.' },
+  { id:16, icon:'📸', name:'Commenter une 2e publication Instagram',      platform:'Instagram', type:'Commentaire', url:'https://www.instagram.com/explore/',                                 instruction:'Laisse un commentaire sur une autre publication Instagram.' },
+];
+
+let tasks = [];
+
+const GAINS_MAP = {
+  5000:  { reward: 250,  label: '~2 000 FCFA/jour' },
+  10000: { reward: 500,  label: '~4 000 FCFA/jour' },
+  20000: { reward: 1000, label: '~8 000 FCFA/jour' },
+  30000: { reward: 1500, label: '~12 000 FCFA/jour' },
+  40000: { reward: 2000, label: '~16 000 FCFA/jour' },
+  50000: { reward: 2500, label: '~20 000 FCFA/jour' },
+  60000: { reward: 3500, label: '~28 000 FCFA/jour' },
+  70000: { reward: 4000, label: '~32 000 FCFA/jour' },
+  80000: { reward: 5000, label: '~40 000 FCFA/jour' },
+  90000: { reward: 6000, label: '~48 000 FCFA/jour' },
+  100000: { reward: 7500, label: '~60 000 FCFA/jour' },
+};
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+function goTo(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  window.scrollTo(0,0);
+
+  if (['page-taches','page-solde','page-retrait','page-profil'].includes(pageId)) {
+    document.getElementById('footer-admin').style.display = 'block';
+  } else {
+    document.getElementById('footer-admin').style.display = 'none';
+  }
+  if (pageId === 'page-solde') updateSoldePage();
+  if (pageId === 'page-retrait') { updateRetraitSolde(); renderRetraitHistory(); }
+  if (pageId === 'page-profil') updateProfilPage();
+  if (pageId === 'page-admin') refreshAdmin();
+}
+
+// ================================================================
+// TOAST
+// ================================================================
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type + ' show';
+  setTimeout(() => t.className = 'toast ' + type, 2800);
+}
+
+// ================================================================
+// PAGE 1: INSCRIPTION
+// ================================================================
+function validerInscription() {
+  const nom = document.getElementById('nom').value.trim();
+  const prenom = document.getElementById('prenom').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const indicatif = document.getElementById('tel-indicatif').value;
+  const tel = indicatif + ' ' + document.getElementById('tel').value.trim();
+
+  if (!nom || !prenom || !email || !tel) { showToast('⚠️ Tous les champs sont obligatoires', 'error'); return; }
+  if (!email.includes('@gmail.com')) { showToast('⚠️ Veuillez utiliser une adresse Gmail', 'error'); return; }
+  if (tel.replace(/\D/g,'').length < 8) { showToast('⚠️ Numéro de téléphone invalide', 'error'); return; }
+
+  appState.currentUser = { nom, prenom, email, tel, dateInscription: new Date().toLocaleString('fr-FR') };
+  allUsers.push({...appState.currentUser, id: allUsers.length+1 });
+  showToast('✅ Inscription réussie ! Choisissez votre plan.', 'success');
+  goTo('page-paiement');
+}
+
+// ================================================================
+// PAGE 2: PAIEMENT
+// ================================================================
+function selectPayment(el, amount) {
+  document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  appState.selectedPayment = amount;
+
+  const info = GAINS_MAP[amount];
+  document.getElementById('payment-amount-display').textContent = amount.toLocaleString('fr-FR') + ' FCFA';
+  document.getElementById('payment-gains').textContent = info.label;
+  document.getElementById('payment-detail').style.display = 'block';
+
+  const btn = document.getElementById('btn-payer');
+  btn.disabled = false; btn.style.opacity = '1';
+}
+
+function validerPaiement() {
+  if (!appState.selectedPayment) { showToast('Veuillez sélectionner un montant', 'error'); return; }
+  appState.depositAmount = appState.selectedPayment;
+  const info = GAINS_MAP[appState.selectedPayment];
+
+  const payment = {
+    id: allPayments.length+1,
+    user: (appState.currentUser?.nom || '') + ' ' + (appState.currentUser?.prenom || ''),
+    montant: appState.selectedPayment,
+    date: new Date().toLocaleString('fr-FR'),
+    status: 'Validé',
+    reference: '—',
+  };
+  allPayments.push(payment);
+
+  initTasks(info.reward);
+  showToast('🎉 Paiement validé ! Commencez vos missions.', 'success');
+  goTo('page-taches');
+}
+
+// ================================================================
+// PAGE 3: TÂCHES
+// ================================================================
+function getTodayKey() {
+  const d = new Date();
+  return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+}
+
+function initTasks(rewardPerTask) {
+  const todayKey = getTodayKey();
+  const savedKey = localStorage.getItem('wf_day');
+  const savedTasks = localStorage.getItem('wf_tasks');
+
+  if (savedKey === todayKey && savedTasks) {
+    // Same day: restore saved progress
+    tasks = JSON.parse(savedTasks);
+    // Update reward in case deposit changed
+    tasks = tasks.map(t => ({ ...t, reward: rewardPerTask }));
+  } else {
+    // New day: fresh tasks
+    tasks = TASKS_DEF.map(t => ({
+      ...t,
+      reward: rewardPerTask,
+      status: 'pending',
+    }));
+    localStorage.setItem('wf_day', todayKey);
+    saveTasks();
+  }
+  renderTasks();
+}
+
+function saveTasks() {
+  localStorage.setItem('wf_tasks', JSON.stringify(tasks));
+}
+
+function renderTasks() {
+  const container = document.getElementById('tasks-container');
+  container.innerHTML = '';
+
+  const done = tasks.filter(t => t.status === 'done').length;
+  document.getElementById('tasks-count').textContent = done + ' / ' + tasks.length;
+  const pct = tasks.length ? (done/tasks.length)*100 : 0;
+  document.getElementById('progress-bar').style.width = pct + '%';
+
+  tasks.forEach(task => {
+    const div = document.createElement('div');
+    div.className = 'task-card fade-up' + (task.status==='done' ? ' done' : task.status==='in-progress' ? ' in-progress' : '');
+    div.id = 'task-'+task.id;
+
+    let actions = '';
+    if (task.status === 'pending') {
+      actions = `<button class="btn-gold-sm" onclick="startTask(${task.id})">▶ Commencer</button>`;
+    } else if (task.status === 'in-progress') {
+      actions = `
+        <span style="font-size:0.8rem;color:var(--gold);">⏳ En cours...</span>
+        <button class="btn-green" onclick="doneTask(${task.id})">✓ Terminé</button>
+      `;
+    } else {
+      actions = `<div class="task-status">✅ Complété</div>`;
+    }
+
+    const platformColor = task.platform === 'TikTok' ? '#ff0050' : task.platform === 'Instagram' ? '#e1306c' : '#1877f2';
+    div.innerHTML = `
+      <div class="task-icon">${task.icon}</div>
+      <div class="task-info">
+        <div class="task-name">${task.name}</div>
+        <div style="display:flex; align-items:center; gap:6px; margin-top:4px; flex-wrap:wrap;">
+          <span style="background:${platformColor}22; color:${platformColor}; font-size:0.75rem; font-weight:700; padding:2px 10px; border-radius:20px;">${task.platform}</span>
+          <span style="color:var(--muted); font-size:0.78rem;">${task.type}</span>
+        </div>
+        ${task.status === 'in-progress' && task.url ? `<a href="${task.url}" target="_blank" style="display:inline-flex; align-items:center; gap:4px; margin-top:8px; background:${platformColor}; color:white; font-size:0.78rem; font-weight:600; padding:5px 12px; border-radius:6px; text-decoration:none;">🔗 Ouvrir ${task.platform}</a><div style="font-size:0.75rem; color:var(--muted); margin-top:4px;">${task.instruction}</div>` : ''}
+      </div>
+      <div class="task-reward">+${task.reward ? task.reward.toLocaleString('fr-FR') : '—'} FCFA</div>
+      <div class="task-actions">${actions}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function startTask(id) {
+  const task = tasks.find(t => t.id === id);
+  if (!task || task.status !== 'pending') return;
+  task.status = 'in-progress';
+  saveTasks();
+  renderTasks();
+  showToast('▶ Mission démarrée — effectuez la tâche puis cliquez Terminé');
+}
+
+function doneTask(id) {
+  const task = tasks.find(t => t.id === id);
+  if (!task || task.status !== 'in-progress') return;
+  task.status = 'done';
+  saveTasks();
+
+  appState.balance += task.reward;
+  updateNavBalance();
+
+  const entry = {
+    taskName: task.name,
+    platform: task.platform,
+    reward: task.reward,
+    time: new Date().toLocaleString('fr-FR'),
+    user: appState.currentUser?.nom + ' ' + appState.currentUser?.prenom,
+  };
+  appState.history.push(entry);
+  allCompletedTasks.push(entry);
+
+  renderTasks();
+  showToast('🎉 +' + task.reward.toLocaleString('fr-FR') + ' FCFA ajoutés à votre solde !', 'success');
+
+  const el = document.getElementById('task-'+id);
+  if(el) { el.classList.add('pulse'); setTimeout(()=>el.classList.remove('pulse'),400); }
+}
+
+function updateNavBalance() {
+  const b = appState.balance.toLocaleString('fr-FR');
+  const el1 = document.getElementById('nav-balance-display');
+  const el2 = document.getElementById('nav-balance-display2');
+  if(el1) el1.textContent = b;
+  if(el2) el2.textContent = b;
+}
+
+function resetTasks() {
+  if(!appState.depositAmount){ showToast("Veuillez d'abord effectuer un dépôt", 'error'); return; }
+  localStorage.removeItem('wf_day');
+  localStorage.removeItem('wf_tasks');
+  const info = GAINS_MAP[appState.depositAmount];
+  initTasks(info.reward);
+  showToast("🔄 Nouvelles missions disponibles pour aujourd'hui !");
+}
+
+// ================================================================
+// PAGE 4: MON SOLDE
+// ================================================================
+function updateSoldePage() {
+  document.getElementById('solde-display').textContent = appState.balance.toLocaleString('fr-FR') + ' FCFA';
+  document.getElementById('stat-taches').textContent = appState.history.length;
+  document.getElementById('stat-depot').textContent = appState.depositAmount ? appState.depositAmount.toLocaleString('fr-FR') : '—';
+  updateNavBalance();
+  renderHistory();
+}
+
+function renderHistory() {
+  const list = document.getElementById('history-list');
+  document.getElementById('history-count').textContent = appState.history.length + ' transaction' + (appState.history.length>1?'s':'');
+
+  if (!appState.history.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><p>Aucune tâche complétée.<br>Commencez à gagner !</p></div>';
+    return;
+  }
+  list.innerHTML = [...appState.history].reverse().map(h => `
+    <div class="history-item">
+      <div class="history-left">
+        <div class="history-icon">${h.platform==='TikTok'?'🎵':'💬'}</div>
+        <div>
+          <div class="history-name">${h.taskName}</div>
+          <div class="history-time">📲 ${h.platform} · ${h.time}</div>
+        </div>
+      </div>
+      <div class="history-amount">+${h.reward.toLocaleString('fr-FR')} FCFA</div>
+    </div>
+  `).join('');
+}
+
+let selectedOperateur = null;
+let retraitHistory = [];
+
+function retrait() {
+  goTo('page-retrait');
+}
+
+function selectOperateur(el, name) {
+  document.querySelectorAll('#page-retrait .payment-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedOperateur = name;
+}
+
+function checkRetraitMontant() {
+  const val = parseInt(document.getElementById('retrait-montant').value) || 0;
+  const msg = document.getElementById('retrait-montant-msg');
+  if (val < 5000) {
+    msg.style.color = 'var(--red)';
+    msg.textContent = '⚠️ Montant minimum : 8 500 FCFA';
+  } else if (val > appState.balance) {
+    msg.style.color = 'var(--red)';
+    msg.textContent = '⚠️ Solde insuffisant';
+  } else {
+    msg.style.color = 'var(--green)';
+    msg.textContent = '✓ Montant valide';
+  }
+}
+
+function soumettreRetrait() {
+  const montant = parseInt(document.getElementById('retrait-montant').value) || 0;
+  const indicatif = document.getElementById('retrait-indicatif').value;
+  const numero = document.getElementById('retrait-numero').value.trim();
+  const nom = document.getElementById('retrait-nom').value.trim();
+
+  if (!appState.kycSubmitted) { showToast('⚠️ Vérifiez votre identité dans Mon Profil avant de retirer.', 'error'); goTo('page-profil'); return; }
+  if (!montant || montant < 8500) { showToast('⚠️ Montant minimum : 8 500 FCFA', 'error'); return; }
+  if (montant > appState.balance) { showToast('⚠️ Solde insuffisant', 'error'); return; }
+  if (!selectedOperateur) { showToast('⚠️ Choisissez un opérateur Mobile Money', 'error'); return; }
+  if (!numero) { showToast('⚠️ Entrez votre numéro Mobile Money', 'error'); return; }
+  if (!nom) { showToast('⚠️ Entrez le nom du titulaire', 'error'); return; }
+
+  // Deduct balance
+  appState.balance -= montant;
+  updateNavBalance();
+
+  const entry = {
+    montant,
+    operateur: selectedOperateur,
+    numero: indicatif + ' ' + numero,
+    nom,
+    date: new Date().toLocaleString('fr-FR'),
+    statut: 'En cours'
+  };
+  retraitHistory.unshift(entry);
+  allRetraits.push({ ...entry, user: appState.currentUser?.nom + ' ' + appState.currentUser?.prenom });
+
+  // Reset form
+  document.getElementById('retrait-montant').value = '';
+  document.getElementById('retrait-numero').value = '';
+  document.getElementById('retrait-nom').value = '';
+  document.getElementById('retrait-montant-msg').textContent = '';
+  document.querySelectorAll('#page-retrait .payment-option').forEach(o => o.classList.remove('selected'));
+  selectedOperateur = null;
+
+  renderRetraitHistory();
+  updateRetraitSolde();
+  showToast('✅ Demande de retrait envoyée ! Traitement sous 24-48h.', 'success');
+}
+
+function renderRetraitHistory() {
+  const el = document.getElementById('retrait-history');
+  if (!retraitHistory.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">💸</div><p>Aucun retrait effectué.</p></div>';
+    return;
+  }
+  el.innerHTML = retraitHistory.map(r => `
+    <div class="history-item" style="margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+      <div class="history-left">
+        <div class="history-icon">💸</div>
+        <div>
+          <div class="history-name">${r.operateur} · ${r.numero}</div>
+          <div class="history-time">👤 ${r.nom} · ${r.date}</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-family:var(--font-head); font-weight:700; color:var(--red); font-size:0.95rem;">-${r.montant.toLocaleString('fr-FR')} FCFA</span>
+        <span class="badge badge-gold">⏳ ${r.statut}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateRetraitSolde() {
+  const el = document.getElementById('retrait-solde-dispo');
+  const el3 = document.getElementById('nav-balance-display3');
+  if (el) el.textContent = appState.balance.toLocaleString('fr-FR') + ' FCFA';
+  if (el3) el3.textContent = appState.balance.toLocaleString('fr-FR');
+}
+
+// ================================================================
+// PAGE 5-6: ADMIN
+// ================================================================
+// ================================================================
+// PAGE: PROFIL
+// ================================================================
+let kycSubmitted = false;
+
+function updateProfilPage() {
+  const u = appState.currentUser;
+  if (!u) return;
+  const initials = (u.prenom ? u.prenom[0] : '') + (u.nom ? u.nom[0] : '');
+  document.getElementById('profil-avatar').textContent = initials.toUpperCase() || '?';
+  document.getElementById('profil-nom-display').textContent = u.prenom + ' ' + u.nom;
+  document.getElementById('profil-email-display').textContent = u.email;
+  document.getElementById('profil-nom').textContent = u.nom;
+  document.getElementById('profil-prenom').textContent = u.prenom;
+  document.getElementById('profil-email').textContent = u.email;
+  document.getElementById('profil-tel').textContent = u.tel;
+  document.getElementById('profil-stat-solde').textContent = appState.balance.toLocaleString('fr-FR');
+  document.getElementById('profil-stat-taches').textContent = appState.history.length;
+  document.getElementById('profil-stat-depot').textContent = appState.depositAmount ? appState.depositAmount.toLocaleString('fr-FR') + ' F' : '—';
+  const nb4 = document.getElementById('nav-balance-display4');
+  if (nb4) nb4.textContent = appState.balance.toLocaleString('fr-FR');
+
+  if (kycSubmitted) {
+    document.getElementById('kyc-form').style.display = 'none';
+    document.getElementById('kyc-status-box').style.display = 'block';
+  }
+}
+
+function previewKYC(input, previewId, dropId) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = document.getElementById(previewId);
+    img.src = e.target.result;
+    img.style.display = 'block';
+    document.getElementById(dropId).style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function soumettreKYC() {
+  const type = document.getElementById('kyc-type').value;
+  const recto = document.getElementById('kyc-file-recto').files[0];
+  if (!type) { showToast('⚠️ Choisissez le type de document', 'error'); return; }
+  if (!recto) { showToast('⚠️ Ajoutez la photo recto de votre pièce', 'error'); return; }
+  kycSubmitted = true;
+  // Save to admin
+  allKYC.push({
+    user: (appState.currentUser?.prenom || '') + ' ' + (appState.currentUser?.nom || ''),
+    email: appState.currentUser?.email || '',
+    type: type,
+    date: new Date().toLocaleString('fr-FR'),
+    statut: 'En attente'
+  });
+  document.getElementById('kyc-form').style.display = 'none';
+  document.getElementById('kyc-status-box').style.display = 'block';
+  showToast('✅ Pièce soumise ! Vérification sous 24h.', 'success');
+}
+
+function deconnexion() {
+  appState = { currentUser: null, balance: 0, depositAmount: 0, history: [], selectedPayment: null };
+  tasks = [];
+  kycSubmitted = false;
+  selectedOperateur = null;
+  retraitHistory = [];
+  goTo('page-inscription');
+  showToast('👋 Vous avez été déconnecté.');
+}
+
+function adminLogin() {
+  const u = document.getElementById('admin-user').value;
+  const p = document.getElementById('admin-pass').value;
+  if (u === 'admin' && p === 'admin123') {
+    refreshAdmin();
+    goTo('page-admin');
+  } else {
+    showToast('❌ Identifiants incorrects', 'error');
+  }
+}
+
+function adminLogout() {
+  goTo('page-admin-login');
+}
+
+function refreshAdmin() {
+  // Stats
+  document.getElementById('admin-stats').innerHTML = `
+    <div class="admin-stat"><div class="admin-stat-num">${allUsers.length}</div><div class="admin-stat-lbl">Utilisateurs inscrits</div></div>
+    <div class="admin-stat"><div class="admin-stat-num" style="color:var(--gold)">${allPayments.reduce((s,p)=>s+p.montant,0).toLocaleString('fr-FR')} FCFA</div><div class="admin-stat-lbl">Total paiements</div></div>
+    <div class="admin-stat"><div class="admin-stat-num" style="color:var(--green)">${allCompletedTasks.length}</div><div class="admin-stat-lbl">Tâches terminées</div></div>
+    <div class="admin-stat"><div class="admin-stat-num" style="color:var(--blue)">${allPayments.length}</div><div class="admin-stat-lbl">Transactions</div></div>
+    <div class="admin-stat"><div class="admin-stat-num" style="color:#a855f7">${allKYC.length}</div><div class="admin-stat-lbl">KYC soumis</div></div>
+  `;
+
+  // Users table
+  document.getElementById('tab-users').innerHTML = allUsers.length ? `
+    <table class="admin-table">
+      <thead><tr><th>#</th><th>Nom</th><th>Email</th><th>Téléphone</th><th>Date</th><th>Statut</th></tr></thead>
+      <tbody>${allUsers.map(u=>`<tr>
+        <td>${u.id}</td>
+        <td>${u.nom} ${u.prenom}</td>
+        <td>${u.email}</td>
+        <td>${u.tel}</td>
+        <td>${u.dateInscription}</td>
+        <td><span class="badge badge-green">✓ Actif</span></td>
+      </tr>`).join('')}</tbody>
+    </table>
+  ` : '<div class="empty"><div class="empty-icon">👥</div><p>Aucune inscription pour l\'instant.</p></div>';
+
+  // Payments table
+  document.getElementById('tab-payments').innerHTML = allPayments.length ? `
+    <table class="admin-table">
+      <thead><tr><th>#</th><th>Utilisateur</th><th>Montant</th><th>Référence</th><th>Date</th><th>Statut</th></tr></thead>
+      <tbody>${allPayments.map(p=>`<tr>
+        <td>${p.id}</td>
+        <td>${p.user}</td>
+        <td><strong style="color:var(--gold)">${p.montant.toLocaleString('fr-FR')} FCFA</strong></td>
+        <td style="color:var(--muted);font-size:0.78rem;">${p.reference || '—'}</td>
+        <td>${p.date}</td>
+        <td><span class="badge badge-green">✓ ${p.status}</span></td>
+      </tr>`).join('')}</tbody>
+    </table>
+  ` : '<div class="empty"><div class="empty-icon">💳</div><p>Aucun paiement pour l\'instant.</p></div>';
+
+  // Tasks table
+  document.getElementById('tab-tasks').innerHTML = allCompletedTasks.length ? `
+    <table class="admin-table">
+      <thead><tr><th>Tâche</th><th>Plateforme</th><th>Utilisateur</th><th>Gain</th><th>Heure</th></tr></thead>
+      <tbody>${allCompletedTasks.map(t=>`<tr>
+        <td>${t.taskName}</td>
+        <td><span class="badge ${t.platform==='TikTok'?'badge-blue':'badge-gold'}">${t.platform}</span></td>
+        <td>${t.user}</td>
+        <td style="color:var(--green);font-weight:600;">+${t.reward.toLocaleString('fr-FR')} FCFA</td>
+        <td style="color:var(--muted)">${t.time}</td>
+      </tr>`).join('')}</tbody>
+    </table>
+  ` : '<div class="empty"><div class="empty-icon">✅</div><p>Aucune tâche terminée pour l\'instant.</p></div>';
+
+  // KYC table
+  document.getElementById('tab-kyc').innerHTML = allKYC.length ? `
+    <table class="admin-table">
+      <thead><tr><th>Utilisateur</th><th>Email</th><th>Type document</th><th>Date soumission</th><th>Statut</th></tr></thead>
+      <tbody>${allKYC.map(k=>`<tr>
+        <td>${k.user}</td>
+        <td>${k.email}</td>
+        <td>${k.type}</td>
+        <td style="color:var(--muted)">${k.date}</td>
+        <td><span class="badge badge-gold">⏳ ${k.statut}</span></td>
+      </tr>`).join('')}</tbody>
+    </table>
+  ` : '<div class="empty"><div class="empty-icon">🪪</div><p>Aucune vérification soumise.</p></div>';
+
+  // Retraits table
+  document.getElementById('tab-retraits').innerHTML = allRetraits.length ? `
+    <table class="admin-table">
+      <thead><tr><th>Utilisateur</th><th>Montant</th><th>Opérateur</th><th>Numéro</th><th>Date</th><th>Statut</th></tr></thead>
+      <tbody>${allRetraits.map(r=>`<tr>
+        <td>${r.user}</td>
+        <td style="color:var(--red);font-weight:600;">-${r.montant.toLocaleString('fr-FR')} FCFA</td>
+        <td>${r.operateur}</td>
+        <td>${r.numero}</td>
+        <td style="color:var(--muted)">${r.date}</td>
+        <td><span class="badge badge-gold">⏳ ${r.statut}</span></td>
+      </tr>`).join('')}</tbody>
+    </table>
+  ` : '<div class="empty"><div class="empty-icon">💸</div><p>Aucun retrait pour l\'instant.</p></div>';
+
+  // KYC table
+  document.getElementById('tab-kyc').innerHTML = allKyc.length ? `
+    <table class="admin-table">
+      <thead><tr><th>Utilisateur</th><th>Email</th><th>Fichier</th><th>Date</th><th>Statut</th><th>Action</th></tr></thead>
+      <tbody>${allKyc.map((k,i)=>`<tr>
+        <td>${k.user}</td>
+        <td style="color:var(--muted)">${k.email}</td>
+        <td style="color:var(--blue)">${k.fichier}</td>
+        <td style="color:var(--muted)">${k.date}</td>
+        <td><span class="badge badge-gold">⏳ ${k.statut}</span></td>
+        <td style="display:flex;gap:6px;">
+          <button onclick="approuverKyc(${i})" style="background:var(--green);color:white;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;">✓ Approuver</button>
+          <button onclick="rejeterKyc(${i})" style="background:var(--red);color:white;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;">✗ Rejeter</button>
+        </td>
+      </tr>`).join('')}</tbody>
+    </table>
+  ` : '<div class="empty"><div class="empty-icon">🪪</div><p>Aucune vérification en attente.</p></div>';
+}
+
+function approuverKyc(i) {
+  allKyc[i].statut = 'Approuvé';
+  refreshAdmin();
+  showToast('✅ Vérification approuvée', 'success');
+}
+
+function rejeterKyc(i) {
+  allKyc[i].statut = 'Rejeté';
+  refreshAdmin();
+  showToast('❌ Vérification rejetée', 'error');
+}
+
+function adminTab(el, tabId) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.admin-section').forEach(s => s.style.display='none');
+  document.getElementById(tabId).style.display='block';
+}
+
+// ================================================================
+// PROFIL PAGE
+// ================================================================
+function updateProfilPage() {
+  const u = appState.currentUser;
+  if (!u) return;
+  const initials = (u.prenom ? u.prenom[0] : '') + (u.nom ? u.nom[0] : '');
+  document.getElementById('profil-avatar').textContent = initials.toUpperCase();
+  document.getElementById('profil-nom-display').textContent = u.prenom + ' ' + u.nom;
+  document.getElementById('profil-email-display').textContent = '✉️ ' + u.email;
+  document.getElementById('profil-tel-display').textContent = '📱 ' + u.tel;
+  document.getElementById('edit-nom').value = u.nom;
+  document.getElementById('edit-prenom').value = u.prenom;
+  document.getElementById('edit-tel').value = u.tel;
+  document.getElementById('profil-stat-taches').textContent = appState.history.length;
+  document.getElementById('profil-stat-gains').textContent = appState.balance.toLocaleString('fr-FR');
+  document.getElementById('profil-stat-depot').textContent = appState.depositAmount ? appState.depositAmount.toLocaleString('fr-FR') : '—';
+
+  const el4 = document.getElementById('nav-balance-display4');
+  if (el4) el4.textContent = appState.balance.toLocaleString('fr-FR');
+
+  if (appState.kycSubmitted) {
+    document.getElementById('profil-verified-badge').style.display = 'block';
+    document.getElementById('profil-unverified-badge').style.display = 'none';
+    document.getElementById('kyc-submitted').style.display = 'block';
+    document.getElementById('kyc-upload-zone').style.display = 'none';
+    document.getElementById('kyc-preview').style.display = 'none';
+  }
+}
+
+function handleKycUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { showToast('⚠️ Fichier trop lourd (max 5 Mo)', 'error'); return; }
+  document.getElementById('kyc-filename').textContent = file.name;
+  document.getElementById('kyc-preview').style.display = 'block';
+  document.getElementById('kyc-upload-zone').style.display = 'none';
+  appState.kycFile = file.name;
+}
+
+function soumettreKyc() {
+  if (!appState.kycFile) { showToast('⚠️ Veuillez uploader votre pièce d'identité', 'error'); return; }
+  appState.kycSubmitted = true;
+  document.getElementById('kyc-preview').style.display = 'none';
+  document.getElementById('kyc-submitted').style.display = 'block';
+  document.getElementById('profil-verified-badge').style.display = 'block';
+  document.getElementById('profil-unverified-badge').style.display = 'none';
+  // Add to admin
+  allKyc.push({
+    user: appState.currentUser?.nom + ' ' + appState.currentUser?.prenom,
+    email: appState.currentUser?.email,
+    fichier: appState.kycFile,
+    date: new Date().toLocaleString('fr-FR'),
+    statut: 'En attente'
+  });
+  showToast('✅ Document soumis ! Vérification sous 24h.', 'success');
+}
+
+function sauvegarderProfil() {
+  const nom = document.getElementById('edit-nom').value.trim();
+  const prenom = document.getElementById('edit-prenom').value.trim();
+  const tel = document.getElementById('edit-tel').value.trim();
+  if (!nom || !prenom || !tel) { showToast('⚠️ Tous les champs sont requis', 'error'); return; }
+  appState.currentUser.nom = nom;
+  appState.currentUser.prenom = prenom;
+  appState.currentUser.tel = tel;
+  updateProfilPage();
+  showToast('✅ Profil mis à jour avec succès !', 'success');
+}
+</script>
+</body>
+</html>
