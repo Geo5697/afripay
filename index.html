@@ -3,55 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AfriPay - Recharge Rapide</title>
+    <title>AfriPay - Recharge</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-gray-50">
+    <div class="max-w-md mx-auto p-6">
+        <h1 class="text-2xl font-bold mb-6">Compte de recharge</h1>
+        
+        <div class="bg-white p-4 rounded-xl shadow mb-4 border border-gray-200">
+            <p class="font-bold">Recharge Standard</p>
+            <p class="text-gray-500 mb-4">500 FCFA</p>
+            <button onclick="lancerPaiement(500)" class="w-full bg-emerald-500 text-white py-3 rounded-lg font-bold">
+                Accéder au tableau de bord
+            </button>
+        </div>
 
-    <div class="max-w-md mx-auto p-4">
-        <h1 class="text-xl font-bold">Compte de recharge</h1>
-        <p class="text-xs text-gray-500 mb-6">Sélectionnez une option pour continuer</p>
-
-        <div class="mt-4 flex flex-col gap-4">
-            
-            <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
-                <p class="text-sm font-bold">Recharge Standard</p>
-                <p class="text-xs text-gray-500 mb-3">Montant : 500 FCFA</p>
-                <button onclick="lancerPaiement(500)" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-2 rounded-lg font-bold transition">
-                    Accéder au tableau de bord
-                </button>
-            </div>
-
-            <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
-                <p class="text-sm font-bold">Recharge Premium</p>
-                <p class="text-xs text-gray-500 mb-3">Montant : 1000 FCFA</p>
-                <button onclick="lancerPaiement(1000)" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-2 rounded-lg font-bold transition">
-                    Accéder au tableau de bord
-                </button>
-            </div>
-
+        <div class="bg-white p-4 rounded-xl shadow border border-gray-200">
+            <p class="font-bold">Recharge Premium</p>
+            <p class="text-gray-500 mb-4">1000 FCFA</p>
+            <button onclick="lancerPaiement(1000)" class="w-full bg-emerald-500 text-white py-3 rounded-lg font-bold">
+                Accéder au tableau de bord
+            </button>
         </div>
     </div>
 
     <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
-
     <script>
         function lancerPaiement(montantChoisi) {
             FedaPay.init({
                 public_key: 'pk_live_Mi5ZqXjL0zHi3k49Dbi7VlGX',
                 transaction: {
                     amount: montantChoisi,
-                    description: 'Achat de crédit sur AfriPay'
-                },
-                customer: {
-                    email: 'client@afripay.bj',
-                    lastname: 'Utilisateur AfriPay'
+                    description: 'Achat de crédit AfriPay'
                 }
             });
             FedaPay.open();
         }
     </script>
-
 </body>
 </html>
