@@ -1,0 +1,554 @@
+/* ═══════════════════════════════════════════════════════════
+   TaskPay — app.js  (Frontend SPA + LocalStorage demo)
+   Backend réel = PHP/MySQL (voir fichiers PHP séparés)
+═══════════════════════════════════════════════════════════ */
+
+// ── STATE ──────────────────────────────────────────────────
+let currentUser = null;
+let selectedAmount = null;
+let tasksCompleted = 0;
+
+const TASKS_PER_DAY = 20;
+const REWARD_PER_TASK = 500; // FCFA par tâche
+
+// ── DEMO DATA ──────────────────────────────────────────────
+const DEMO_TASKS = [
+  { id:1, platform:'TikTok', icon:'🎵', title:'Aimer une vidéo TikTok', desc:'Likez la vidéo de danse virale de @dance_africa_ci — Plus de 2M de vues.', reward:500, media:'https://picsum.photos/seed/tiktok1/200/200', link:'#' },
+  { id:2, platform:'Facebook', icon:'📘', title:'Liker une publication Facebook', desc:'Likez la page officielle de la communauté TaskPay sur Facebook.', reward:500, media:'https://picsum.photos/seed/fb1/200/200', link:'#' },
+  { id:3, platform:'Instagram', icon:'📸', title:'Liker sur Instagram', desc:'Likez la photo de coucher de soleil de @nature_africa — Contenu populaire.', reward:500, media:'https://picsum.photos/seed/insta1/200/200', link:'#' },
+  { id:4, platform:'YouTube', icon:'▶️', title:'Commenter une vidéo YouTube', desc:'Laissez un commentaire positif sur cette vidéo de cuisine africaine.', reward:500, media:'https://picsum.photos/seed/yt1/200/200', link:'#' },
+  { id:5, platform:'TikTok', icon:'🎵', title:'Commenter sur TikTok', desc:'Commentez "🔥 Incroyable !" sur la dernière vidéo de @comedy_ci.', reward:500, media:'https://picsum.photos/seed/tiktok2/200/200', link:'#' },
+  { id:6, platform:'Facebook', icon:'📘', title:'Partager une publication', desc:'Partagez l\'article sur l\'entrepreneuriat africain avec votre réseau.', reward:500, media:'https://picsum.photos/seed/fb2/200/200', link:'#' },
+  { id:7, platform:'Instagram', icon:'📸', title:'Liker 3 photos mode', desc:'Likez 3 photos de la collection mode de @fashion_dakar.', reward:500, media:'https://picsum.photos/seed/insta2/200/200', link:'#' },
+  { id:8, platform:'TikTok', icon:'🎵', title:'Suivre un compte TikTok', desc:'Suivez le compte @music_africa_official pour booster sa visibilité.', reward:500, media:'https://picsum.photos/seed/tiktok3/200/200', link:'#' },
+  { id:9, platform:'YouTube', icon:'▶️', title:'Liker une vidéo YouTube', desc:'Likez ce tutoriel de coiffure africaine — Aidez la créatrice !', reward:500, media:'https://picsum.photos/seed/yt2/200/200', link:'#' },
+  { id:10, platform:'Facebook', icon:'📘', title:'Réagir à une story', desc:'Réagissez avec ❤️ à la story de la boutique @bijoux_abidjan.', reward:500, media:'https://picsum.photos/seed/fb3/200/200', link:'#' },
+  { id:11, platform:'Instagram', icon:'📸', title:'Commenter une photo voyage', desc:'Commentez "Magnifique destination ! 🌍" sur cette photo de voyage.', reward:500, media:'https://picsum.photos/seed/insta3/200/200', link:'#' },
+  { id:12, platform:'TikTok', icon:'🎵', title:'Aimer 5 vidéos cuisine', desc:'Likez 5 vidéos de recettes sur le compte @cuisine_africaine_tiktok.', reward:500, media:'https://picsum.photos/seed/tiktok4/200/200', link:'#' },
+  { id:13, platform:'Facebook', icon:'📘', title:'Rejoindre un groupe', desc:'Rejoignez le groupe Facebook "Entrepreneurs d\'Afrique de l\'Ouest".', reward:500, media:'https://picsum.photos/seed/fb4/200/200', link:'#' },
+  { id:14, platform:'Instagram', icon:'📸', title:'Sauvegarder une publication', desc:'Sauvegardez le post de @sante_naturelle_afrique dans vos collections.', reward:500, media:'https://picsum.photos/seed/insta4/200/200', link:'#' },
+  { id:15, platform:'YouTube', icon:'▶️', title:'S\'abonner à une chaîne', desc:'Abonnez-vous à la chaîne d\'éducation financière @finances_afrique.', reward:500, media:'https://picsum.photos/seed/yt3/200/200', link:'#' },
+  { id:16, platform:'TikTok', icon:'🎵', title:'Partager une vidéo TikTok', desc:'Partagez la vidéo de sensibilisation écologique de @green_africa_ci.', reward:500, media:'https://picsum.photos/seed/tiktok5/200/200', link:'#' },
+  { id:17, platform:'Facebook', icon:'📘', title:'Liker une page business', desc:'Likez et suivez la page de la startup FinTech @moneytech_africa.', reward:500, media:'https://picsum.photos/seed/fb5/200/200', link:'#' },
+  { id:18, platform:'Instagram', icon:'📸', title:'Mentionner un ami', desc:'Mentionnez un ami dans les commentaires de ce post promotionnel.', reward:500, media:'https://picsum.photos/seed/insta5/200/200', link:'#' },
+  { id:19, platform:'YouTube', icon:'▶️', title:'Regarder et liker', desc:'Regardez au moins 30 secondes et likez ce clip musical africain.', reward:500, media:'https://picsum.photos/seed/yt4/200/200', link:'#' },
+  { id:20, platform:'TikTok', icon:'🎵', title:'Duet ou Stitch TikTok', desc:'Créez un duet ou stitch avec la vidéo virale de @danse_afrique.', reward:500, media:'https://picsum.photos/seed/tiktok6/200/200', link:'#' },
+];
+
+// ── INIT ────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  // Check stored session
+  const stored = localStorage.getItem('taskpay_user');
+  if (stored) {
+    currentUser = JSON.parse(stored);
+  }
+
+  // Set today date label
+  const today = new Date();
+  const label = today.toLocaleDateString('fr-FR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const el = document.getElementById('taskDateLabel');
+  if (el) el.textContent = label.charAt(0).toUpperCase() + label.slice(1);
+
+  // Init tasks state
+  loadTasksState();
+  loadHistory();
+});
+
+// ── NAVIGATION ──────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showSection(name) {
+  document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + name)?.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('nav-' + name)?.classList.add('active');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// ── TOAST ───────────────────────────────────────────────────
+function toast(msg, type = 'success') {
+  const container = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = 'toast ' + (type !== 'success' ? type : '');
+  t.innerHTML = `${type === 'error' ? '❌' : type === 'warning' ? '⚠️' : '✅'} ${msg}`;
+  container.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+// ── REGISTER ────────────────────────────────────────────────
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const nom     = document.getElementById('nom').value.trim();
+  const prenom  = document.getElementById('prenom').value.trim();
+  const email   = document.getElementById('email').value.trim();
+  const pass    = document.getElementById('password').value;
+  const indicatif = document.getElementById('indicatif').value;
+  const tel     = document.getElementById('telephone').value.trim();
+  const conds   = document.getElementById('conditions').checked;
+
+  if (!nom || !prenom || !email || !pass || !tel) return toast('Veuillez remplir tous les champs.', 'error');
+  if (pass.length < 8) return toast('Le mot de passe doit contenir au moins 8 caractères.', 'error');
+  if (!conds) return toast('Vous devez accepter les conditions d\'utilisation.', 'warning');
+
+  const btn = document.getElementById('registerBtn');
+  btn.innerHTML = '<span class="spinner"></span> Création…';
+  btn.disabled = true;
+
+  // Simulated API call (replace with fetch to register.php)
+  await apiCall('register.php', { nom, prenom, email, password: pass, indicatif, telephone: tel }, (data) => {
+    currentUser = { nom, prenom, email, telephone: indicatif + tel, id: data.id || Date.now(), earnings: 0 };
+    localStorage.setItem('taskpay_user', JSON.stringify(currentUser));
+    addUser(currentUser);
+    btn.innerHTML = 'Créer mon compte →';
+    btn.disabled = false;
+    showPage('page-payment');
+    toast('Compte créé avec succès ! Bienvenue ' + prenom + ' 👋');
+  });
+});
+
+// ── LOGIN ───────────────────────────────────────────────────
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPassword').value;
+  if (!email || !pass) return toast('Remplissez tous les champs.', 'error');
+
+  await apiCall('login.php', { email, password: pass }, (data) => {
+    currentUser = data.user;
+    localStorage.setItem('taskpay_user', JSON.stringify(currentUser));
+    initDashboard();
+    showPage('page-tasks');
+    toast('Bienvenue ' + currentUser.prenom + ' !');
+  });
+});
+
+// ── PAYMENT ─────────────────────────────────────────────────
+function selectAmount(el) {
+  document.querySelectorAll('.amount-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedAmount = parseInt(el.dataset.amount);
+  document.getElementById('selectedAmountLabel').textContent = formatNum(selectedAmount);
+  document.getElementById('selectedInfo').style.display = 'flex';
+  document.getElementById('payBtn').disabled = false;
+}
+
+function processPay() {
+  if (!selectedAmount) return toast('Veuillez sélectionner un montant.', 'warning');
+  document.getElementById('modalAmountDisplay').textContent = formatNum(selectedAmount);
+  document.getElementById('modal-payment').classList.add('open');
+}
+
+async function confirmFedaPay() {
+  closeModal('modal-payment');
+
+  // ── REAL FEDAPAY INTEGRATION ──
+  // Replace YOUR_PUBLIC_KEY with your actual FedaPay public key
+  // This initiates a payment transaction via FedaPay API
+  const FEDAPAY_PUBLIC_KEY = 'YOUR_FEDAPAY_PUBLIC_KEY';
+
+  await apiCall('create_payment.php', {
+    amount: selectedAmount,
+    user_id: currentUser?.id,
+    email: currentUser?.email,
+    description: 'Dépôt TaskPay — Activation compte',
+  }, (data) => {
+    // In production: redirect to data.payment_url (FedaPay checkout URL)
+    // window.location.href = data.payment_url;
+    // For demo, simulate success:
+    simulatePaymentSuccess(data);
+  });
+}
+
+function simulatePaymentSuccess(data) {
+  // Record payment in local storage (backend handles real storage)
+  const payments = JSON.parse(localStorage.getItem('taskpay_payments') || '[]');
+  payments.push({
+    id: Date.now(),
+    user_id: currentUser?.id,
+    user_email: currentUser?.email,
+    user_name: (currentUser?.prenom || '') + ' ' + (currentUser?.nom || ''),
+    amount: selectedAmount,
+    transaction_id: 'TXN_' + Math.random().toString(36).substr(2,9).toUpperCase(),
+    date: new Date().toLocaleDateString('fr-FR'),
+    status: 'payé'
+  });
+  localStorage.setItem('taskpay_payments', JSON.stringify(payments));
+
+  // Add to history
+  addHistory('Dépôt', selectedAmount, 'succès');
+
+  // Show tasks dashboard
+  initDashboard();
+  showPage('page-tasks');
+  toast('Paiement confirmé ! Vos tâches sont maintenant disponibles. 🎉');
+}
+
+// ── TASKS ───────────────────────────────────────────────────
+function loadTasksState() {
+  const key = 'taskpay_tasks_' + getTodayKey();
+  const state = JSON.parse(localStorage.getItem(key) || '{}');
+  tasksCompleted = Object.values(state).filter(v => v === 'done').length;
+  renderTasks(state);
+  updateSidebar();
+}
+
+function renderTasks(state) {
+  const container = document.getElementById('tasksList');
+  if (!container) return;
+  container.innerHTML = '';
+
+  DEMO_TASKS.forEach(task => {
+    const status = state[task.id] || 'idle';
+    const isDone = status === 'done';
+
+    const card = document.createElement('div');
+    card.className = 'task-card' + (isDone ? ' done' : '');
+    card.id = 'task-' + task.id;
+    card.innerHTML = `
+      <div class="task-media">
+        <img src="${task.media}" alt="${task.platform}" loading="lazy" onerror="this.style.display='none';this.parentNode.textContent='${task.icon}'" />
+      </div>
+      <div class="task-info">
+        <div class="task-platform">${task.icon} ${task.platform}</div>
+        <h3>${task.title}</h3>
+        <p>${task.desc}</p>
+        <div class="task-reward">+${formatNum(task.reward)} FCFA</div>
+      </div>
+      <div class="task-actions">
+        ${isDone
+          ? `<button class="btn-task btn-completed" disabled>✓ Terminé</button>`
+          : status === 'started'
+          ? `<button class="btn-task btn-done" onclick="completeTask(${task.id})">Terminé ✓</button>`
+          : `<button class="btn-task btn-start" onclick="startTask(${task.id}, '${task.link}')">Commencer</button>`
+        }
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  // Progress
+  const pct = (tasksCompleted / TASKS_PER_DAY) * 100;
+  const bar = document.getElementById('progressBar');
+  if (bar) bar.style.width = pct + '%';
+}
+
+function startTask(id, link) {
+  const key = 'taskpay_tasks_' + getTodayKey();
+  const state = JSON.parse(localStorage.getItem(key) || '{}');
+  state[id] = 'started';
+  localStorage.setItem(key, JSON.stringify(state));
+
+  // Open task link
+  if (link && link !== '#') window.open(link, '_blank');
+
+  // Update button
+  const card = document.getElementById('task-' + id);
+  if (card) {
+    const actions = card.querySelector('.task-actions');
+    actions.innerHTML = `<button class="btn-task btn-done" onclick="completeTask(${id})">Terminé ✓</button>`;
+  }
+  toast('Tâche commencée ! Effectuez l\'action puis cliquez "Terminé".', 'info');
+}
+
+function completeTask(id) {
+  const key = 'taskpay_tasks_' + getTodayKey();
+  const state = JSON.parse(localStorage.getItem(key) || '{}');
+  state[id] = 'done';
+  localStorage.setItem(key, JSON.stringify(state));
+
+  tasksCompleted++;
+
+  // Update earnings
+  if (currentUser) {
+    currentUser.earnings = (currentUser.earnings || 0) + REWARD_PER_TASK;
+    localStorage.setItem('taskpay_user', JSON.stringify(currentUser));
+  }
+
+  // Record task in admin
+  recordTask(id);
+  // Add to history
+  addHistory('Tâche #' + id, REWARD_PER_TASK, 'succès');
+
+  // Update UI
+  const card = document.getElementById('task-' + id);
+  if (card) {
+    card.classList.add('done');
+    card.querySelector('.task-actions').innerHTML = `<button class="btn-task btn-completed" disabled>✓ Terminé</button>`;
+  }
+
+  updateSidebar();
+  const pct = (tasksCompleted / TASKS_PER_DAY) * 100;
+  const bar = document.getElementById('progressBar');
+  if (bar) bar.style.width = pct + '%';
+
+  toast('🎉 +' + formatNum(REWARD_PER_TASK) + ' FCFA crédités !');
+
+  if (tasksCompleted === TASKS_PER_DAY) {
+    setTimeout(() => {
+      showModal('modal-success',
+        'Félicitations ! 🏆',
+        `Vous avez complété toutes vos ${TASKS_PER_DAY} tâches d'aujourd'hui ! Total gagné : ${formatNum(currentUser.earnings)} FCFA.`
+      );
+    }, 500);
+  }
+}
+
+function updateSidebar() {
+  const remaining = TASKS_PER_DAY - tasksCompleted;
+  const el = document.getElementById('tasksLeft');
+  const earned = document.getElementById('totalEarned');
+  const wbal = document.getElementById('withdrawBalance');
+
+  if (el) el.textContent = remaining;
+  if (earned) earned.textContent = formatNum(currentUser?.earnings || 0);
+  if (wbal) wbal.textContent = formatNum(currentUser?.earnings || 0) + ' FCFA';
+}
+
+function initDashboard() {
+  if (!currentUser) return;
+  const avatar = document.getElementById('sidebarAvatar');
+  const name   = document.getElementById('sidebarName');
+  const email  = document.getElementById('sidebarEmail');
+
+  if (avatar) avatar.textContent = (currentUser.prenom || 'U')[0].toUpperCase();
+  if (name)   name.textContent   = (currentUser.prenom || '') + ' ' + (currentUser.nom || '');
+  if (email)  email.textContent  = currentUser.email || '';
+
+  updateSidebar();
+  loadTasksState();
+}
+
+// ── WITHDRAW ────────────────────────────────────────────────
+function requestWithdraw(e) {
+  e.preventDefault();
+  const network = document.getElementById('network').value;
+  const phone   = document.getElementById('withdrawPhone').value.trim();
+  const amount  = parseInt(document.getElementById('withdrawAmount').value);
+  const idFile  = document.getElementById('idCard').files[0];
+
+  if (!network) return toast('Sélectionnez un réseau mobile.', 'error');
+  if (!phone)   return toast('Entrez votre numéro de téléphone.', 'error');
+  if (!amount || amount < 50000) return toast('Le montant minimum est de 50 000 FCFA.', 'warning');
+  if ((currentUser?.earnings || 0) < 50000) return toast('Solde insuffisant pour un retrait.', 'warning');
+  if (!idFile)  return toast('Veuillez uploader votre pièce d\'identité.', 'error');
+
+  // Record withdrawal request
+  const withdrawals = JSON.parse(localStorage.getItem('taskpay_withdrawals') || '[]');
+  withdrawals.push({
+    id: Date.now(),
+    user_id: currentUser?.id,
+    user_name: (currentUser?.prenom || '') + ' ' + (currentUser?.nom || ''),
+    amount, network, phone,
+    date: new Date().toLocaleDateString('fr-FR'),
+    status: 'en attente'
+  });
+  localStorage.setItem('taskpay_withdrawals', JSON.stringify(withdrawals));
+
+  addHistory('Retrait', amount, 'en attente');
+
+  document.getElementById('modal-withdraw').classList.add('open');
+}
+
+function previewId(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = document.getElementById('idPreview');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    document.getElementById('uploadIcon').style.display = 'none';
+    document.getElementById('uploadText').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── HISTORY ─────────────────────────────────────────────────
+function addHistory(type, amount, status) {
+  const history = JSON.parse(localStorage.getItem('taskpay_history_' + (currentUser?.id || 'guest')) || '[]');
+  history.unshift({
+    date: new Date().toLocaleDateString('fr-FR'),
+    type, amount, status
+  });
+  localStorage.setItem('taskpay_history_' + (currentUser?.id || 'guest'), JSON.stringify(history));
+  loadHistory();
+}
+
+function loadHistory() {
+  const tbody = document.getElementById('historyTable');
+  if (!tbody) return;
+  const history = JSON.parse(localStorage.getItem('taskpay_history_' + (currentUser?.id || 'guest')) || '[]');
+  if (!history.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:32px;">Aucune transaction</td></tr>';
+    return;
+  }
+  tbody.innerHTML = history.map(h => `
+    <tr>
+      <td>${h.date}</td>
+      <td>${h.type}</td>
+      <td>${formatNum(h.amount)} FCFA</td>
+      <td><span class="badge ${h.status === 'succès' ? 'badge-success' : h.status === 'en attente' ? 'badge-warning' : 'badge-info'}">${h.status}</span></td>
+    </tr>
+  `).join('');
+}
+
+// ── ADMIN ───────────────────────────────────────────────────
+document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const user = document.getElementById('adminUser').value;
+  const pass = document.getElementById('adminPass').value;
+  if (user === 'admin' && pass === 'admin123') {
+    loadAdminDashboard();
+    showPage('page-admin');
+  } else {
+    toast('Identifiants incorrects.', 'error');
+  }
+});
+
+function adminTab(name, btn) {
+  document.querySelectorAll('#page-admin .section-panel').forEach(s => s.classList.remove('active'));
+  document.getElementById('admin-' + name)?.classList.add('active');
+  document.querySelectorAll('#page-admin .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function loadAdminDashboard() {
+  const users      = JSON.parse(localStorage.getItem('taskpay_users') || '[]');
+  const payments   = JSON.parse(localStorage.getItem('taskpay_payments') || '[]');
+  const allTasks   = JSON.parse(localStorage.getItem('taskpay_all_tasks') || '[]');
+  const withdrawals= JSON.parse(localStorage.getItem('taskpay_withdrawals') || '[]');
+
+  // Stats
+  document.getElementById('a-users').textContent       = users.length;
+  document.getElementById('a-payments').textContent     = payments.length;
+  document.getElementById('a-tasks').textContent        = allTasks.length;
+  document.getElementById('a-withdrawals').textContent  = withdrawals.length;
+
+  // Users table
+  const uTbody = document.getElementById('adminUsersTable');
+  uTbody.innerHTML = users.length ? users.map((u, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td>${u.prenom} ${u.nom}</td>
+      <td>${u.email}</td>
+      <td>${u.telephone || '—'}</td>
+      <td>${u.date || '—'}</td>
+      <td><span class="badge badge-success">Actif</span></td>
+    </tr>
+  `).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">Aucun utilisateur</td></tr>';
+
+  // Payments table
+  const pTbody = document.getElementById('adminPaymentsTable');
+  pTbody.innerHTML = payments.length ? payments.map((p, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td>${p.user_name}</td>
+      <td>${formatNum(p.amount)} FCFA</td>
+      <td style="font-size:0.75rem;color:var(--muted);">${p.transaction_id}</td>
+      <td>${p.date}</td>
+      <td><span class="badge badge-success">${p.status}</span></td>
+    </tr>
+  `).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">Aucun paiement</td></tr>';
+
+  // Tasks table
+  const tTbody = document.getElementById('adminTasksTable');
+  tTbody.innerHTML = allTasks.length ? allTasks.map((t, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td>${t.user_name}</td>
+      <td>${t.task_title}</td>
+      <td>${t.platform}</td>
+      <td>${t.date}</td>
+      <td style="color:var(--accent2);">+${formatNum(REWARD_PER_TASK)} FCFA</td>
+    </tr>
+  `).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">Aucune tâche</td></tr>';
+
+  // Withdrawals table
+  const wTbody = document.getElementById('adminWithdrawalsTable');
+  wTbody.innerHTML = withdrawals.length ? withdrawals.map((w, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td>${w.user_name}</td>
+      <td>${formatNum(w.amount)} FCFA</td>
+      <td>${w.network}</td>
+      <td>${w.phone}</td>
+      <td>${w.date}</td>
+      <td>
+        <span class="badge ${w.status === 'payé' ? 'badge-success' : 'badge-warning'}">${w.status}</span>
+        ${w.status !== 'payé' ? `<button class="btn btn-success" onclick="approveWithdraw(${i})" style="padding:4px 10px;font-size:0.75rem;margin-left:8px;">Approuver</button>` : ''}
+      </td>
+    </tr>
+  `).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">Aucune demande</td></tr>';
+}
+
+function approveWithdraw(idx) {
+  const withdrawals = JSON.parse(localStorage.getItem('taskpay_withdrawals') || '[]');
+  if (withdrawals[idx]) {
+    withdrawals[idx].status = 'payé';
+    localStorage.setItem('taskpay_withdrawals', JSON.stringify(withdrawals));
+    loadAdminDashboard();
+    toast('Retrait approuvé !');
+  }
+}
+
+// ── HELPERS ─────────────────────────────────────────────────
+function addUser(user) {
+  const users = JSON.parse(localStorage.getItem('taskpay_users') || '[]');
+  user.date = new Date().toLocaleDateString('fr-FR');
+  users.push(user);
+  localStorage.setItem('taskpay_users', JSON.stringify(users));
+}
+
+function recordTask(taskId) {
+  const allTasks = JSON.parse(localStorage.getItem('taskpay_all_tasks') || '[]');
+  const task = DEMO_TASKS.find(t => t.id === taskId);
+  allTasks.push({
+    user_id:    currentUser?.id,
+    user_name:  (currentUser?.prenom || '') + ' ' + (currentUser?.nom || ''),
+    task_title: task?.title || 'Tâche #' + taskId,
+    platform:   task?.platform || '—',
+    date:       new Date().toLocaleDateString('fr-FR')
+  });
+  localStorage.setItem('taskpay_all_tasks', JSON.stringify(allTasks));
+}
+
+function getTodayKey() {
+  return new Date().toISOString().split('T')[0] + '_' + (currentUser?.id || 'guest');
+}
+
+function formatNum(n) {
+  return (n || 0).toLocaleString('fr-FR');
+}
+
+function showModal(id, title, text) {
+  document.getElementById('modal-success-title').textContent = title;
+  document.getElementById('modal-success-text').textContent = text;
+  document.getElementById('modal-success').classList.add('open');
+}
+
+function logout() {
+  currentUser = null;
+  localStorage.removeItem('taskpay_user');
+  showPage('page-login');
+  toast('Vous êtes déconnecté.', 'warning');
+}
+
+// ── SIMULATED API (replace fetch calls with real PHP endpoints) ──
+async function apiCall(endpoint, data, onSuccess) {
+  // In production, use:
+  // const res = await fetch(endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+  // const json = await res.json();
+  // if (json.success) onSuccess(json);
+  // else toast(json.message, 'error');
+
+  // DEMO simulation:
+  await new Promise(r => setTimeout(r, 800));
+  onSuccess({ success: true, id: Date.now(), user: { ...data, id: Date.now(), earnings: 0, prenom: data.prenom || 'Utilisateur', nom: data.nom || '' } });
+}
