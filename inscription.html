@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AfriGains – Inscription gratuite</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+:root{--bg:#f2f5f1;--surface:#ffffff;--ink:#12261c;--muted:#51645a;--green:#0d7a4d;--gold:#f2b134;--line:#c3cdc5;--err:#b3261e;--on-green:#ffffff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a14;--surface:#16271e;--ink:#eaf1ec;--muted:#9db3a6;--green:#3fc489;--line:#33503f;--err:#ff8a80;--on-green:#08140e}}
+:root[data-theme="dark"]{--bg:#0e1a14;--surface:#16271e;--ink:#eaf1ec;--muted:#9db3a6;--green:#3fc489;--line:#33503f;--err:#ff8a80;--on-green:#08140e}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 "Source Sans 3",system-ui,sans-serif}
+h1{font:800 clamp(30px,6vw,42px)/1.1 "Bricolage Grotesque",system-ui,sans-serif;margin:0 0 10px}
+.wrap{max-width:520px;margin:0 auto;padding:0 20px 48px}
+header{padding:18px 0}
+.logo{font:800 22px "Bricolage Grotesque",system-ui,sans-serif;text-decoration:none;color:inherit}
+.logo b{color:var(--green)}
+.lead{color:var(--muted);margin:0 0 22px}
+.badge{display:inline-block;background:var(--gold);color:#12261c;font-weight:600;border-radius:8px;padding:4px 10px;font-size:15px;margin-bottom:14px}
+form{background:var(--surface);border:1.5px solid var(--ink);border-radius:18px;padding:22px;box-shadow:8px 8px 0 var(--gold)}
+.two{display:grid;gap:0 14px}
+@media(min-width:480px){.two{grid-template-columns:1fr 1fr}}
+.f{margin-bottom:16px}
+label{display:block;font-weight:600;margin-bottom:6px}
+input[type=text],input[type=email],input[type=tel],input[type=password]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px 14px}
+input:focus-visible{outline:3px solid var(--gold);outline-offset:1px;border-color:var(--ink)}
+.hint{display:block;color:var(--muted);font-size:14px;margin-top:4px}
+.err{display:none;color:var(--err);font-size:14px;margin-top:4px}
+.f.bad .err{display:block}
+.f.bad input{border-color:var(--err)}
+.check{display:flex;gap:10px;align-items:flex-start;margin-bottom:18px}
+.check input{margin-top:5px;width:18px;height:18px;accent-color:var(--green)}
+.check label{font-weight:400;margin:0}
+button{width:100%;font:600 17px inherit;font-family:inherit;padding:14px;border:0;border-radius:10px;background:var(--green);color:var(--on-green);cursor:pointer}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.ok{display:none;margin-top:18px;padding:14px;border-radius:10px;border:1.5px solid var(--green)}
+.ok.show{display:block}
+.foot{text-align:center;color:var(--muted);margin-top:18px;font-size:15px}
+a{color:var(--green)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><a class="logo" href="/">Afri<b>Gains</b></a></header>
+<main>
+  <span class="badge">Gratuit, sans paiement</span>
+  <h1>Créez votre compte</h1>
+  <p class="lead">Quatre champs suffisent. Votre pièce d’identité ne sera demandée qu’au premier retrait.</p>
+
+  <form id="f" novalidate>
+    <div class="two">
+      <div class="f"><label for="prenom">Prénom</label><input id="prenom" type="text" autocomplete="given-name" required><span class="err">Entrez votre prénom.</span></div>
+      <div class="f"><label for="nom">Nom</label><input id="nom" type="text" autocomplete="family-name" required><span class="err">Entrez votre nom.</span></div>
+    </div>
+    <div class="f"><label for="email">Adresse Gmail</label><input id="email" type="email" autocomplete="email" placeholder="prenom@gmail.com" required><span class="err">Entrez une adresse se terminant par @gmail.com.</span></div>
+    <div class="f"><label for="tel">Numéro de téléphone</label><input id="tel" type="tel" autocomplete="tel" placeholder="+242 06 000 0000" required><span class="hint">Avec l’indicatif de votre pays. Il servira aux retraits Mobile Money.</span><span class="err">Entrez un numéro valide avec l’indicatif (ex. +242…).</span></div>
+    <div class="f"><label for="mdp">Mot de passe</label><input id="mdp" type="password" autocomplete="new-password" minlength="8" required><span class="hint">8 caractères minimum.</span><span class="err">Le mot de passe doit contenir au moins 8 caractères.</span></div>
+    <div class="f check"><input id="cgu" type="checkbox" required><label for="cgu">J’accepte les <a href="#cgu-page">conditions d’utilisation</a> et la <a href="#confidentialite">politique de confidentialité</a>.</label></div>
+    <div class="f" id="cguErr" style="margin:-8px 0 14px"><span class="err">Vous devez accepter les conditions pour continuer.</span></div>
+    <button type="submit">Créer mon compte gratuit</button>
+    <div class="ok" id="ok" role="status">Compte prêt à être créé. Prochaine étape : choisir vos premières tâches.</div>
+  </form>
+  <p class="foot">Déjà inscrit ? <a href="/connexion">Se connecter</a></p>
+</main>
+</div>
+<script src="/api.js"></script>
+<script src="/js/inscription.js"></script>
+</body>
+  </html>
+  
